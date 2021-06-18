@@ -19,11 +19,15 @@ bot.on('message', msg => {
     msg.color = '#13ab13';
     msg.seperator = `//\\\\\\ \n \\\\\\\\//`;
     msg.prefix = prefix;
-    msg.bankbalance;
+    msg.bankbalance = 0;
+    //Help
+    
     if(msg.content == `${prefix}help`)
     {
         commands.module.help.help(msg, discord);
     }
+    //Admin
+    
     else if(msg.content.startsWith(`${prefix}setRPlayChannel`))
     {
         const Channel = msg.mentions.channels.first()
@@ -44,6 +48,8 @@ bot.on('message', msg => {
         }
         return;
     }
+    //Games
+
     else if(msg.content.startsWith(`${prefix}deposit`))
     {
         msg.channelForRolePlay = channelForRolePlay;
@@ -54,6 +60,7 @@ bot.on('message', msg => {
     }
     else if(msg.content === `${prefix}TTT`)
     {
+
     }
 });
 
