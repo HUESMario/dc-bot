@@ -1,6 +1,9 @@
 `strict mode`
 
 const discord = require('discord.js');
+const bot = new discord.Client();
+const disbut = require('discord-buttons');
+disbut(bot);
 const commands = require('./commands/commands.js');
 const tools = require('./tools/tools.js');
 const fs = require('fs');
@@ -9,7 +12,6 @@ let prefix = 'rg!';
 let channelForRolePlay;
 let bankbalance = 0;
 let ownbalance = 0;
-const bot = new discord.Client();
 
 bot.on('ready', () => {
     console.log(`I'm driving and I'm speeding.`);
@@ -21,10 +23,16 @@ bot.on('message', msg => {
     msg.prefix = prefix;
     msg.bankbalance = 0;
     //Help
-    
+
     if(msg.content == `${prefix}help`)
     {
         commands.module.help.help(msg, discord);
+    }
+    else if(msg.content === `${prefix}source`)
+    {
+        msg.button;
+        msg.button = new disbut.MessageButton();
+        commands.module.help.source(msg, discord);
     }
     //Admin
     
@@ -60,7 +68,7 @@ bot.on('message', msg => {
     }
     else if(msg.content === `${prefix}TTT`)
     {
-
+        commands.module.Game.TTT(msg, discord);
     }
 });
 

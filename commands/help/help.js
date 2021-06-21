@@ -7,7 +7,9 @@ const help = (msg, discord) => {
         {name: "> `Admin`", value: `Du kannst den Channel für das Rollenspiel mit: **${msg.prefix}setRPlayChannel <#Channel>**
         ${msg.seperator}
         Kick User mit **${msg.prefix}kick <@User> (reason)**`},
-        {name: "> `Game`", value: `mit **${msg.prefix}deposit (value)** kannst du Geld einzahlen. `}
+        {name: "> `Game`", value: `mit **${msg.prefix}deposit (value)** kannst du Geld einzahlen. 
+        ${msg.seperator}
+        mit **${msg.prefix}TTT <@opponent> kannst du gegen wen Tik Tak Toe spielen`}
     )  
     .setFooter(msg.guild.name, msg.guild.iconURL())
 
