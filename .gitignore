@@ -15,6 +15,6 @@ pids
 # Dependency directories
 node_modules/
 jspm_packages/
+commands/Game/data/
 
 token.js
-commands\Game\data\games.json
