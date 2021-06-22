@@ -14,6 +14,7 @@ let bankbalance = 0;
 let ownbalance = 0;
 
 bot.on('clickButton', async (button) => {
+    button.button = disbut;
     commands.module.Game.TTT.handleClick(button);
 })
 

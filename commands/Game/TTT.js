@@ -1,5 +1,5 @@
 const fs = require('fs');
-let fields = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
+let fields = [[{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}], [{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}], [{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}]]
 const TTT = (msg, discord) => {
     const data = require('./data/games.json');
     const Gameinfo = data;
@@ -8,60 +8,64 @@ const TTT = (msg, discord) => {
 
     getPlayfield(msg);
     
-    let newGame = {};
-    newGame[msg.guild.id] = {
-        "Player1": Player1,
-        "Player2": Player2
+    let newGame = data;
+    if(newGame[msg.guild.id] !== undefined)
+    {
+        newGame[msg.guild.id] = {
+            "Player1": Player1,
+            "Player2": Player2
+        }
     }
-
     fs.writeFile('./commands/Game/data/games.json', JSON.stringify(newGame), (err) => {
         if(err) throw err;
     })
 }
 
-const handleTTT = (handleData) => {
-
+const handleTTT = async function(handleData) {
+    checkForWin(handleData.message.components)
+    changeField(handleData.id)
+    getPlayfield(handleData);
 }
 
 const getPlayfield = (msg) => {
     const upper_left = new msg.button.MessageButton()
-    .setID('upper_left')
-    .setStyle(2)
-    .setLabel(fields[0][0]);
+    .setID('0:0')
+    .setStyle(fields[0][0].style)
+    .setLabel(fields[0][0].character);
     const upper_middle = new msg.button.MessageButton()
-    .setID('upper_middle')
-    .setStyle(2)
-    .setLabel(fields[0][0]);
+    .setID('0:1')
+    .setStyle(fields[0][1].style)
+    .setLabel(fields[0][1].character);
     const upper_right = new msg.button.MessageButton()
-    .setID('upper_right')
-    .setStyle(2)
-    .setLabel(fields[0][0]);
+    .setID('0:2')
+    .setStyle(fields[0][2].style)
+    .setLabel(fields[0][2].character);
 
     const middle_left = new msg.button.MessageButton()
-    .setID('upper_left')
-    .setStyle(2)
-    .setLabel(fields[0][0]);
+    .setID('1:0')
+    .setStyle(fields[1][0].style)
+    .setLabel(fields[1][0].character);
     const middle_middle = new msg.button.MessageButton()
-    .setID('middle_middle')
-    .setStyle(2)
-    .setLabel(fields[0][0]);
+    .setID('1:1')
+    .setStyle(fields[1][1].style)
+    .setLabel(fields[1][1].character);
     const middle_right = new msg.button.MessageButton()
-    .setID('middle_right')
-    .setStyle(2)
-    .setLabel(fields[0][0]);
+    .setID('1:2')
+    .setStyle(fields[1][2].style)
+    .setLabel(fields[1][2].character);
 
     const buttom_left = new msg.button.MessageButton()
-    .setID('buttom_left')
-    .setStyle(2)
-    .setLabel(fields[0][0]);
+    .setID('2:0')
+    .setStyle(fields[2][0].style)
+    .setLabel(fields[2][0].character);
     const buttom_middle = new msg.button.MessageButton()
-    .setID('buttom_middle')
-    .setStyle(2)
-    .setLabel(fields[0][0]);
+    .setID('2:1')
+    .setStyle(fields[2][1].style)
+    .setLabel(fields[2][1].character);
     const buttom_right = new msg.button.MessageButton()
-    .setID('buttom_right')
-    .setStyle(2)
-    .setLabel(fields[0][0]);
+    .setID('2:2')
+    .setStyle(fields[2][2].style)
+    .setLabel(fields[2][2].character);
 
 
     const row1 = new msg.button.MessageActionRow()
@@ -81,6 +85,16 @@ const getPlayfield = (msg) => {
 
     msg.channel.send('Player 1:', {components: [row1, row2, row3]});
     return [row1, row2, row3]
+}
+
+const checkForWin = (components) => {
+    console.log(components);
+}
+
+const changeField = (id) => {
+    const getIndexes = id.split(':');
+    console.log(getIndexes);
+    fields[getIndexes[0]][getIndexes[1]].character = 'X'; 
 }
 
 exports.module = {
