@@ -13,6 +13,10 @@ let channelForRolePlay;
 let bankbalance = 0;
 let ownbalance = 0;
 
+bot.on('clickButton', async (button) => {
+    commands.module.Game.TTT.handleClick(button);
+})
+
 bot.on('ready', () => {
     console.log(`I'm driving and I'm speeding.`);
 })
@@ -66,9 +70,18 @@ bot.on('message', msg => {
         commands.module.Game.deposit(msg, discord);
         bankbalance += Number.parseInt(msg.bankbalance);
     }
-    else if(msg.content === `${prefix}TTT`)
+    else if(msg.content.startsWith(`${prefix}TTT`))
     {
-        commands.module.Game.TTT(msg, discord);
+        if(msg.mentions.users.first() === undefined)
+        {
+            const embed = new discord.MessageEmbed()
+            .addFields({name:`Error!`, value: `> Du musst noch einen Gegner pingen ^^`});
+            
+            msg.channel.send(embed);
+            return;
+        }
+        msg.button = disbut;
+        commands.module.Game.TTT.run(msg, discord);
     }
 });
 

@@ -16,7 +16,10 @@ exports.module = {
         setRolePlayChannel: setRPC.module.setRolePlayChannel
     },
     Game: {
-        TTT: TTT.module.TTT,
+        TTT: {
+            run: TTT.module.TTT,
+            handleClick: TTT.module.handleClick
+        },
         deposit: deposit.module.deposit
     }
     
