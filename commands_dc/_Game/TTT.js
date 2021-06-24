@@ -1,13 +1,19 @@
 `strict mode`
 
+let activePlayer = 0;
+const playerChars = [['X', 1], ['O', 3]];
 const fs = require('fs');
 const tools = require('../../tools/tools.js');
 const solutions = [
     [["0:0"], ["0:1"], ["0:2"], 0], [["1:0"],["1:1"],["1:2"], 1], [["2:0"], ["2:1"], ["2:2"], 2], 
     [["0:0"], ["1:0"], ["2:0"], 3], [["0:1"], ["1:1"], ["2:1"], 4], [["0:2"], ["1:2"], ["2:2"], 5],
-    [[["0:0"], ["1:1"], ["2:2"], 6], [["0:2"], ["1:1"], ["2:0"], 7]]
+    [["0:0"], ["1:1"], ["2:2"], 6], [["0:2"], ["1:1"], ["2:0"], 7]
 ]
-let fields = [[{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}], [{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}], [{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}]]
+let fields = [
+    [{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}], 
+    [{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}], 
+    [{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}]
+]
 const TTT = (msg, discord) => {
     const data = require('./_data/games.json');
     const Player1 = msg.author;
@@ -29,10 +35,18 @@ const TTT = (msg, discord) => {
     })
 }
 
-const handleTTT = async function(handleData) {
-    checkForWin(handleData.message.components)
-    changeField(handleData.id)
+const handleTTT = (handleData) => {
+    changeField(handleData)
     getPlayfield(handleData);
+    if(checkForWin(handleData.message.components))
+    {
+        console.log('Won');
+    }
+    else
+    {
+        changePlayer(); 
+    }
+    handleData.message.delete();
 }
 
 const getPlayfield = (msg) => {
@@ -91,27 +105,45 @@ const getPlayfield = (msg) => {
     .addComponent(buttom_middle)
     .addComponent(buttom_right);
 
-    msg.channel.send('Player 1:', {components: [row1, row2, row3]});
+    msg.channel.send(`Player ${activePlayer + 1}:`, {components: [row1, row2, row3]});
     return [row1, row2, row3]
 }
 
-const checkForWin = (components) => {
-    solutions[0].forEach(solution => {
-        let button1;
-        let button2;
-        let button3;
-        switch(solution[3])
+const checkForWin = (componentsRows) => {
+    let won = false;
+    solutions.forEach(solution => {
+        if(typeof(solution) !== 'number')
         {
-            case 0:
-
+            const position1 = tools.module.extractPos(solution[0]);
+            const position2 = tools.module.extractPos(solution[1]);
+            const position3 = tools.module.extractPos(solution[2]);
+            let button1 = componentsRows[position1[0]].components[position1[1]];
+            let button2 = componentsRows[position2[0]].components[position2[1]];
+            let button3 = componentsRows[position3[0]].components[position3[1]];
+            if(button1.label === 'X' && button2.label ==='X' && button3.label === 'X')
+            {
+                won = true;
+            }
         }
     });
+    return won;
 }
 
-const changeField = (id) => {
-    const getIndexes = tools.module.extractPos(id);
-    console.log(getIndexes);
-    fields[getIndexes[0]][getIndexes[1]].character = 'X'; 
+const changePlayer = () => {
+    if(activePlayer === 0)
+    {
+        activePlayer = 1;
+    }
+    else if(activePlayer === 1)
+    {
+        activePlayer = 0;
+    }
+}
+
+const changeField = (button) => {
+    const getIndexes = tools.module.extractPos(button.id)
+    fields[getIndexes[0]][getIndexes[1]].character = playerChars[activePlayer]; 
+    button.message.components[getIndexes[0]].components[getIndexes[1]].label = playerChars[activePlayer];
 }
 
 exports.module = {

@@ -16,6 +16,7 @@ let ownbalance = 0;
 bot.on('clickButton', async (button) => {
     button.button = disbut;
     commands.module.Game.TTT.handleClick(button);
+    await button.defer();
 })
 
 bot.on('ready', () => {
