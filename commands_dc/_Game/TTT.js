@@ -1,27 +1,22 @@
 `strict mode`
 
-class TTT
-{
-    TTT() {
-        activePlayer = 0;
-    playerChars = [['X', 1], ['O', 3]];
-    fs = require('fs');
-    tools = require('../../tools/tools.js');
-    Player1;
-    Player2;
-    }
-
-solutions = [
+let activePlayer = 0;
+const playerChars = [['X', 1], ['O', 3]];
+const fs = require('fs');
+const tools = require('../../tools/tools.js');
+let Player1;
+let Player2;
+const solutions = [
     [["0:0"], ["0:1"], ["0:2"], 0], [["1:0"],["1:1"],["1:2"], 1], [["2:0"], ["2:1"], ["2:2"], 2], 
     [["0:0"], ["1:0"], ["2:0"], 3], [["0:1"], ["1:1"], ["2:1"], 4], [["0:2"], ["1:2"], ["2:2"], 5],
     [["0:0"], ["1:1"], ["2:2"], 6], [["0:2"], ["1:1"], ["2:0"], 7]
 ]
-fields = [
+let fields = [
     [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
     [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
     [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}]
 ]
-TTTStart = (msg, discord) => {
+const TTT = (msg, discord) => {
     const data = require('./_data/games.json');
     Player1 = msg.author;
     Player2 = msg.mentions.users.first();
@@ -47,7 +42,7 @@ TTTStart = (msg, discord) => {
     })
 }
 
-handleTTT = (handleData) => {
+const handleTTT = (handleData) => {
     changeField(handleData);
     if(checkForWin(handleData.message.components))
     {
@@ -61,7 +56,7 @@ handleTTT = (handleData) => {
     handleData.message.delete();
 }
 
-Won = () => {
+const Won = () => {
     for(let i = 0; i < fields.length; ++i)
     {
         for(let j = 0; j < fields[i].length; ++j)
@@ -72,7 +67,7 @@ Won = () => {
     
 }
 
-getPlayfield = (msg) => {
+const getPlayfield = (msg) => {
     const upper_left = new msg.button.MessageButton()
     .setID('0:0')
     .setStyle(fields[0][0].style)
@@ -146,7 +141,7 @@ getPlayfield = (msg) => {
     return [row1, row2, row3]
 }
 
-checkForWin = (componentsRows) => {
+const checkForWin = (componentsRows) => {
     let won = false;
     solutions.forEach(solution => {
         if(typeof(solution) !== 'number')
@@ -170,7 +165,7 @@ checkForWin = (componentsRows) => {
     return won;
 }
 
-changePlayer = () => {
+const changePlayer = () => {
     if(activePlayer === 0)
     {
         activePlayer = 1;
@@ -181,14 +176,14 @@ changePlayer = () => {
     }
 }
 
-changeField = (button) => {
+const changeField = (button) => {
     const getIndexes = tools.module.extractPos(button.id)
     fields[getIndexes[0]][getIndexes[1]].character = playerChars[activePlayer][0]; 
     fields[getIndexes[0]][getIndexes[1]].style = playerChars[activePlayer][1]; 
     button.message.components[getIndexes[0]].components[getIndexes[1]].label = playerChars[activePlayer][0];
 }
 
-}
 exports.module = {
-    TTT: TTT
+    TTT: TTT,
+    handleClick: handleTTT
 }
