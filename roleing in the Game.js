@@ -4,7 +4,7 @@ const discord = require('discord.js');
 const bot = new discord.Client();
 const disbut = require('discord-buttons');
 disbut(bot);
-const commands = require('./commands/commands.js');
+const commands = require('./commands_dc/commands.js');
 const tools = require('./tools/tools.js');
 const fs = require('fs');
 const token = require('./token.js');
