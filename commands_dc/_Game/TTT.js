@@ -1,9 +1,11 @@
+`strict mode`
+
 const fs = require('fs');
 const tools = require('../../tools/tools.js');
 const solutions = [
-    [["0:0"], ["0:1"], ["0:2"]], [["1:0"],["1:1"],["1:2"]], [["2:0"], ["2:1"], ["2:2"]], 
-    [["0:0"], ["1:0"], ["2:0"]], [["0:1"], ["1:1"], ["2:1"]], [["0:2"], ["1:2"], ["2:2"]],
-    [[["0:0"], ["1:1"], ["2:2"]], [["0:2"], ["1:1"], ["2:0"]]]
+    [["0:0"], ["0:1"], ["0:2"], 0], [["1:0"],["1:1"],["1:2"], 1], [["2:0"], ["2:1"], ["2:2"], 2], 
+    [["0:0"], ["1:0"], ["2:0"], 3], [["0:1"], ["1:1"], ["2:1"], 4], [["0:2"], ["1:2"], ["2:2"], 5],
+    [[["0:0"], ["1:1"], ["2:2"], 6], [["0:2"], ["1:1"], ["2:0"], 7]]
 ]
 let fields = [[{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}], [{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}], [{character: " ", style: 2}, {character: " ", style: 2}, {character: " ", style: 2}]]
 const TTT = (msg, discord) => {
@@ -13,14 +15,15 @@ const TTT = (msg, discord) => {
 
     getPlayfield(msg);
     let newGame = {};
-    if(data !== {})
+    if(data === {})
     {
         newGame[msg.guild.id] = {
             "Player1": Player1,
             "Player2": Player2
         }
     }
-    newGame = data;
+    else if(data !== {}) newGame = data;
+
     fs.writeFile('./commands_dc/_Game/_data/games.json', JSON.stringify(newGame), (err) => {
         if(err) throw err;
     })
@@ -94,7 +97,14 @@ const getPlayfield = (msg) => {
 
 const checkForWin = (components) => {
     solutions[0].forEach(solution => {
-        
+        let button1;
+        let button2;
+        let button3;
+        switch(solution[3])
+        {
+            case 0:
+
+        }
     });
 }
 
