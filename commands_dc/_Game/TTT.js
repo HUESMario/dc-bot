@@ -6,6 +6,7 @@ const fs = require('fs');
 const tools = require('../../tools/tools.js');
 let Player1;
 let Player2;
+let msgCopy;
 const solutions = [
     [["0:0"], ["0:1"], ["0:2"], 0], [["1:0"],["1:1"],["1:2"], 1], [["2:0"], ["2:1"], ["2:2"], 2], 
     [["0:0"], ["1:0"], ["2:0"], 3], [["0:1"], ["1:1"], ["2:1"], 4], [["0:2"], ["1:2"], ["2:2"], 5],
@@ -17,36 +18,78 @@ let fields = [
     [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}]
 ]
 const TTT = (msg, discord) => {
+    msgCopy = msg;
     const data = require('./_data/games.json');
-    Player1 = msg.author;
-    Player2 = msg.mentions.users.first();
+    Player1 = msg.Player1;
+    Player2 = msg.Player2;
+    console.log(Player1);
     fields = [
         [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
         [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
         [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}]
     ]
 
-    getPlayfield(msg);
+    const joinedIDs = [Player1.id, Player2.id].join('&')
     let newGame = {};
-    if(data === {})
+    if(data[joinedIDs] === undefined)
     {
-        newGame[msg.guild.id] = {
+        createRole(msg.guild, Player1.id, Player2.id);
+        newGame[joinedIDs] = {}
+        newGame[joinedIDs] = {
             "Player1": Player1,
             "Player2": Player2
         }
+        getPlayfield(msg);
     }
-    else if(data !== {}) newGame = data;
+    else if(data[joinedIDs] !== undefined)
+    {
+        const embed = new discord.MessageEmbed()
+        .setColor(msg.color)
+        .setTitle(`roleing in the Game - Tik Tak Toe`)
+        .setAuthor(msg.author.username)
+        .addFields({name: "> TTT", value: `You two already have a Game!`})
+        .setFooter(msg.guild.name, msg.guild.iconURL())
+
+        msg.channel.send(embed);
+    }
 
     fs.writeFile('./commands_dc/_Game/_data/games.json', JSON.stringify(newGame), (err) => {
         if(err) throw err;
     })
 }
 
+const addRole = (msg, Player1, Player2) => {
+    const addedIDs = [Player1.id, Player2.id].join('&');
+    const role = msg.guild.roles.cache.find(role => role.name === addedIDs);
+    
+    Player1.roles.add(role);
+    Player2.roles.add(role);
+}
+
+const createRole = (guild, Player1ID, Player2ID) => {
+    const ids = [Player1ID, Player2ID];
+    guild.roles.create({
+        data: {
+            name: ids.join('&'),
+            color:'green',
+        },
+        reason: 'Role for Tik Tak Toe, to organize Games',
+    })
+    .then(function(value){
+        msgCopy.guild = value
+        addRole(msgCopy, Player1, Player2)
+        })
+}
+
+const deleteRole = () => {
+
+}
+
 const handleTTT = (handleData) => {
     changeField(handleData);
     if(checkForWin(handleData.message.components))
     {
-        Won();
+        Won(handleData);
     }
     else
     {
@@ -56,7 +99,10 @@ const handleTTT = (handleData) => {
     handleData.message.delete();
 }
 
-const Won = () => {
+const Won = (member) => {
+    const data = require('./_data/games.json');
+    const wonGame = data;
+    
     for(let i = 0; i < fields.length; ++i)
     {
         for(let j = 0; j < fields[i].length; ++j)
@@ -157,7 +203,6 @@ const checkForWin = (componentsRows) => {
                 fields[position1[0]][position1[1]].style = 4;
                 fields[position2[0]][position2[1]].style = 4;
                 fields[position3[0]][position3[1]].style = 4;
-                console.log(fields[position1[0]][position1[1]]);
                 won = true;
             }
         }
