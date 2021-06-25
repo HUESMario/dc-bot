@@ -16,6 +16,7 @@ let ownbalance = 0;
 bot.on('clickButton', async (button) => {
     button.button = disbut;
     commands.module.Game.TTT.handleClick(button);
+    button
     await button.defer();
 })
 
@@ -28,6 +29,12 @@ bot.on('message', msg => {
     msg.seperator = `//\\\\\\ \n \\\\\\\\//`;
     msg.prefix = prefix;
     msg.bankbalance = 0;
+    msg.Player1 = msg.member;
+    msg.Player2;
+    if(msg.mentions.users.first())
+    {
+        msg.Player2 = msg.mentions.members.first()
+    }
     //Help
 
     if(msg.content == `${prefix}help`)
