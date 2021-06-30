@@ -22,14 +22,13 @@ const TTT = (msg, discord) => {
     const data = require('./_data/games.json');
     Player1 = msg.Player1;
     Player2 = msg.Player2;
-    console.log(Player1);
     fields = [
         [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
         [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
         [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}]
     ]
 
-    const joinedIDs = [Player1.id, Player2.id].join('&')
+    const joinedIDs = tools.module.connectIDs(Player1.id, Player2.id);
     let newGame = {};
     if(data[joinedIDs] === undefined)
     {
@@ -37,7 +36,9 @@ const TTT = (msg, discord) => {
         newGame[joinedIDs] = {}
         newGame[joinedIDs] = {
             "Player1": Player1,
-            "Player2": Player2
+            "Player2": Player2,
+            "fields": fields,
+            "activePlayer": activePlayer
         }
         getPlayfield(msg);
     }
@@ -51,6 +52,7 @@ const TTT = (msg, discord) => {
         .setFooter(msg.guild.name, msg.guild.iconURL())
 
         msg.channel.send(embed);
+
     }
 
     fs.writeFile('./commands_dc/_Game/_data/games.json', JSON.stringify(newGame), (err) => {
@@ -59,7 +61,7 @@ const TTT = (msg, discord) => {
 }
 
 const addRole = (msg, Player1, Player2) => {
-    const addedIDs = [Player1.id, Player2.id].join('&');
+    const addedIDs = tools.module.connectIDs(Player1.id, Player2.id);
     const role = msg.guild.roles.cache.find(role => role.name === addedIDs);
     
     Player1.roles.add(role);
@@ -67,11 +69,11 @@ const addRole = (msg, Player1, Player2) => {
 }
 
 const createRole = (guild, Player1ID, Player2ID) => {
-    const ids = [Player1ID, Player2ID];
+    const ids = tools.module.connectIDs(Player1ID, Player2ID);
     guild.roles.create({
         data: {
-            name: ids.join('&'),
-            color:'green',
+            name: ids,
+            color:'GREEN',
         },
         reason: 'Role for Tik Tak Toe, to organize Games',
     })
@@ -81,12 +83,17 @@ const createRole = (guild, Player1ID, Player2ID) => {
         })
 }
 
-const deleteRole = () => {
-
+const deleteRole = (handleClick, player1, player2) => {
+    console.log(handleClick.members.cache.get(player1.user.id));
+    console.log(handleClick.members.cache.get(player2.user.id));
+    const addedIDs = tools.module.connectIDs(Player1.user.id, Player2.user.id);
+    handleClick.roles.cache.find(role => role.name === addedIDs).delete();
 }
 
 const handleTTT = (handleData) => {
     changeField(handleData);
+    saveGameData(Player1.id, Player2.id);
+    const getData = getGameData(Player1.id, Player2.id);
     if(checkForWin(handleData.message.components))
     {
         Won(handleData);
@@ -97,6 +104,25 @@ const handleTTT = (handleData) => {
     }
     getPlayfield(handleData);
     handleData.message.delete();
+}
+
+const saveGameData = async (player1ID, player2ID) => {
+
+    let connectedIDs = tools.module.connectIDs(player1ID, player2ID);
+    const getData = await require('./_data/games.json');
+    console.log(getData);
+    getData[connectedIDs].fields = fields;
+    getData[connectedIDs].activePlayer = activePlayer;
+    console.log(getData);
+    fs.writeFile('./_data/games.json', JSON.stringify(getData), (err) => {
+        if(err) throw err;
+    })
+}
+
+const getGameData = async (player1ID, player2ID) => {
+    const connectedIDs = tools.module.connectIDs(player1ID, player2ID);
+    const getData = await require('./_data/games.json');
+    return getData[connectedIDs];
 }
 
 const Won = (member) => {
@@ -110,7 +136,7 @@ const Won = (member) => {
             fields[i][j].Disabled = true;
         }
     }
-    
+    deleteRole(member.guild, Player1, Player2);
 }
 
 const getPlayfield = (msg) => {
@@ -178,11 +204,11 @@ const getPlayfield = (msg) => {
 
     if(activePlayer === 0)
     {
-        msg.channel.send(`${Player1.username}:`, {components: [row1, row2, row3]});
+        msg.channel.send(`${Player1.user.username}:`, {components: [row1, row2, row3]});
     }
     else if(activePlayer === 1)
     {
-        msg.channel.send(`${Player2.username}:`, {components: [row1, row2, row3]});
+        msg.channel.send(`${Player2.user.username}:`, {components: [row1, row2, row3]});
     }
     return [row1, row2, row3]
 }
