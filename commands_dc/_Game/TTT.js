@@ -32,7 +32,6 @@ const TTT = (msg, discord) => {
     let newGame = {};
     if(data[joinedIDs] === undefined)
     {
-        createRole(msg.guild, Player1.id, Player2.id);
         newGame[joinedIDs] = {}
         newGame[joinedIDs] = {
             "Player1": Player1,
@@ -55,80 +54,60 @@ const TTT = (msg, discord) => {
 
     }
 
-    fs.writeFile('./commands_dc/_Game/_data/games.json', JSON.stringify(newGame), (err) => {
+    fs.writeFileSync('./commands_dc/_Game/_data/games.json', JSON.stringify(newGame), (err) => {
         if(err) throw err;
     })
 }
 
-const addRole = (msg, Player1, Player2) => {
-    const addedIDs = tools.module.connectIDs(Player1.id, Player2.id);
-    const role = msg.guild.roles.cache.find(role => role.name === addedIDs);
-    
-    Player1.roles.add(role);
-    Player2.roles.add(role);
-}
-
-const createRole = (guild, Player1ID, Player2ID) => {
-    const ids = tools.module.connectIDs(Player1ID, Player2ID);
-    guild.roles.create({
-        data: {
-            name: ids,
-            color:'GREEN',
-        },
-        reason: 'Role for Tik Tak Toe, to organize Games',
-    })
-    .then(function(value){
-        msgCopy.guild = value
-        addRole(msgCopy, Player1, Player2)
-        })
-}
-
-const deleteRole = (handleClick, player1, player2) => {
-    console.log(handleClick.members.cache.get(player1.user.id));
-    console.log(handleClick.members.cache.get(player2.user.id));
-    const addedIDs = tools.module.connectIDs(Player1.user.id, Player2.user.id);
-    handleClick.roles.cache.find(role => role.name === addedIDs).delete();
-}
 
 const handleTTT = (handleData) => {
-    changeField(handleData);
-    saveGameData(Player1.id, Player2.id);
-    const getData = getGameData(Player1.id, Player2.id);
-    if(checkForWin(handleData.message.components))
-    {
-        Won(handleData);
+    const isCorrectPlayer = () => {
+        const splitedUser = tools.module.splitIDs(handleData.message.content);
+        console.log(handleData.clicker);
+        console.log(handleData.message.guild.user);
+        const reactedUser = handleData.clicker.user.id;
+
+        for(let i = 0; i < splitedUser.length; ++i)
+        {
+            if(splitedUser[i] === reactedUser || splitedUser[i] === reactedUser)
+            {
+                return true;
+            }
+        }
+        return false;
     }
-    else
+
+    if(isCorrectPlayer())
     {
-        changePlayer(); 
+        changeField(handleData);
+        const connectedID = tools.module.extractID(handleData.message);
+        saveGameData(connectedID);
+        const newData = require('./_data/games.json');
+        fs.readFileSync('./commands_dc/_Game/_data/games.json', 'utf-8', (err, data) => {
+            data = JSON.parse(data);
+            getGameData(connectedID, data);
+        })
+        if(checkForWin(handleData.message.components))
+        {
+            Won(handleData);
+            deleteGameData(connectedID, newData);
+        }
+        else
+        {
+            changePlayer(); 
+        }
+        getPlayfield(handleData);
+        handleData.message.delete();
     }
-    getPlayfield(handleData);
-    handleData.message.delete();
-}
-
-const saveGameData = async (player1ID, player2ID) => {
-
-    let connectedIDs = tools.module.connectIDs(player1ID, player2ID);
-    const getData = await require('./_data/games.json');
-    console.log(getData);
-    getData[connectedIDs].fields = fields;
-    getData[connectedIDs].activePlayer = activePlayer;
-    console.log(getData);
-    fs.writeFile('./_data/games.json', JSON.stringify(getData), (err) => {
-        if(err) throw err;
-    })
-}
-
-const getGameData = async (player1ID, player2ID) => {
-    const connectedIDs = tools.module.connectIDs(player1ID, player2ID);
-    const getData = await require('./_data/games.json');
-    return getData[connectedIDs];
+    else if(!isCorrectPlayer())
+    {
+        handleData.channel.send("You aren't the one who was challenged or challenging.");
+    }
 }
 
 const Won = (member) => {
     const data = require('./_data/games.json');
-    const wonGame = data;
-    
+    deleteGameData(Player1.user.id, Player2.user.id);
     for(let i = 0; i < fields.length; ++i)
     {
         for(let j = 0; j < fields[i].length; ++j)
@@ -136,7 +115,36 @@ const Won = (member) => {
             fields[i][j].Disabled = true;
         }
     }
-    deleteRole(member.guild, Player1, Player2);
+}
+
+const saveGameData = async (connectedID) => {
+    
+    fs.readFile('./commands_dc/_Game/_data/games.json','utf-8', (err, data) => {
+        if(err) throw err;
+
+        data = JSON.parse(data);
+
+        data[connectedID]["fields"] = fields;
+        data[connectedID].activePlayer = activePlayer;
+        fs.writeFile('./commands_dc/_Game/_data/games.json', JSON.stringify(data), (err) => {
+            if(err) throw err;
+        })
+    })
+    
+}
+
+const getGameData = async (connectedIDs, getData) => {
+    Player1 = getData[connectedIDs]["Player1"];
+    Player2 = getData[connectedIDs]["Player2"];
+    fields = getData[connectedIDs]["fields"];
+    activePlayer = getData[connectedIDs]["activePlayer"];
+}
+
+const deleteGameData =  (connectedID, getData) => {
+    delete getData[connectedIDs];
+    fs.writeFileSync('./_data/games.json', JSON.stringify(getData), (err) => {
+        if(err) throw err;
+    });
 }
 
 const getPlayfield = (msg) => {
@@ -204,11 +212,11 @@ const getPlayfield = (msg) => {
 
     if(activePlayer === 0)
     {
-        msg.channel.send(`${Player1.user.username}:`, {components: [row1, row2, row3]});
+        msg.channel.send(`${[Player1.user.id, Player2.user.id].join('&')}`, {components: [row1, row2, row3]});
     }
     else if(activePlayer === 1)
     {
-        msg.channel.send(`${Player2.user.username}:`, {components: [row1, row2, row3]});
+        msg.channel.send(`${[Player1.user.id, Player2.user.id].join('&')}`, {components: [row1, row2, row3]});
     }
     return [row1, row2, row3]
 }
