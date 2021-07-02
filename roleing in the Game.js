@@ -10,8 +10,6 @@ const fs = require('fs');
 const token = require('./token.js');
 let prefix = 'rg!';
 let channelForRolePlay;
-let bankbalance = 0;
-let ownbalance = 0;
 let setGlobal;
 
 bot.on('clickButton', async (button) => {
@@ -28,7 +26,6 @@ bot.on('message', msg => {
     msg.color = '#13ab13';
     msg.seperator = `//\\\\\\ \n \\\\\\\\//`;
     msg.prefix = prefix;
-    msg.bankbalance = 0;
     msg.Player1 = msg.member;
     msg.Player2;
     
@@ -55,6 +52,7 @@ bot.on('message', msg => {
                             url: msg.referenced_message.embeds[0].author.icon_url || msg.content.author.icon_url
                         }
                         })
+                        console.log(msg.referenced_message.embeds[0].author.icon_url || msg.content.author.icon_url);
                 }
                 globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
                 bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
@@ -119,10 +117,8 @@ bot.on('message', msg => {
     else if(msg.content.startsWith(`${prefix}deposit`))
     {
         msg.channelForRolePlay = channelForRolePlay;
-        msg.amountForNow = Number.parseInt(bankbalance);
         msg.tool = {checkForChannel: tools.module.checkForChannel};
         commands.module.Game.deposit(msg, discord);
-        bankbalance += Number.parseInt(msg.bankbalance);
     }
     else if(msg.content.startsWith(`${prefix}TTT`))
     {
