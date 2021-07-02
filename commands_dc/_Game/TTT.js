@@ -7,16 +7,19 @@ const tools = require('../../tools/tools.js');
 let Player1;
 let Player2;
 let msgCopy;
+
 const solutions = [
     [["0:0"], ["0:1"], ["0:2"], 0], [["1:0"],["1:1"],["1:2"], 1], [["2:0"], ["2:1"], ["2:2"], 2], 
     [["0:0"], ["1:0"], ["2:0"], 3], [["0:1"], ["1:1"], ["2:1"], 4], [["0:2"], ["1:2"], ["2:2"], 5],
     [["0:0"], ["1:1"], ["2:2"], 6], [["0:2"], ["1:1"], ["2:0"], 7]
 ]
+
 let fields = [
     [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
     [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
     [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}]
 ]
+
 const TTT = (msg, discord) => {
     msgCopy = msg;
     const data = require('./_data/games.json');
@@ -59,23 +62,21 @@ const TTT = (msg, discord) => {
     })
 }
 
-
 const handleTTT = (handleData) => {
     const isCorrectPlayer = () => {
         const splitedUser = tools.module.splitIDs(handleData.message.content);
         console.log(handleData.clicker);
-        console.log(handleData.message.guild.user);
-        const reactedUser = handleData.clicker.user.id;
-
+        const clickedUser = handleData.clicker.user.id;
         for(let i = 0; i < splitedUser.length; ++i)
         {
-            if(splitedUser[i] === reactedUser || splitedUser[i] === reactedUser)
+            if(splitedUser[i] === clickedUser || splitedUser[i] === clickedUser)
             {
                 return true;
             }
         }
         return false;
     }
+
 
     if(isCorrectPlayer())
     {
@@ -125,7 +126,7 @@ const saveGameData = async (connectedID) => {
         data = JSON.parse(data);
 
         data[connectedID]["fields"] = fields;
-        data[connectedID].activePlayer = activePlayer;
+        data[connectedID]["activePlayer"] = activePlayer;
         fs.writeFile('./commands_dc/_Game/_data/games.json', JSON.stringify(data), (err) => {
             if(err) throw err;
         })

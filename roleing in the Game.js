@@ -12,6 +12,7 @@ let prefix = 'rg!';
 let channelForRolePlay;
 let bankbalance = 0;
 let ownbalance = 0;
+let setGlobal;
 
 bot.on('clickButton', async (button) => {
     button.button = disbut;
@@ -30,12 +31,29 @@ bot.on('message', msg => {
     msg.bankbalance = 0;
     msg.Player1 = msg.member;
     msg.Player2;
+
+    if(msg.channel === setGlobal && !msg.author.bot)
+    {
+        const globalEmbed = new discord.MessageEmbed()
+        .setThumbnail(bot.user.avatarURL)
+        .setAuthor(msg.author.username, msg.author.avatarURL)
+        .setColor([180, 160, 50])
+
+        
+        if(msg.referenced_message){
+            console.log(msg.referenced_message.embeds[0].author.name);
+            globalEmbed.addFields({name: `antwortet auf: ${msg.referenced_message.embeds[0].author.name || msg.content.author.name}`, value: `${msg.referenced_message.content || msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`})
+        }
+        globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
+
+        msg.channel.send(globalEmbed);
+    }
+
     if(msg.mentions.users.first())
     {
         msg.Player2 = msg.mentions.members.first()
     }
     //Help
-
     if(msg.content == `${prefix}help`)
     {
         commands.module.help.help(msg, discord);
@@ -46,6 +64,8 @@ bot.on('message', msg => {
         msg.button = new disbut.MessageButton();
         commands.module.help.source(msg, discord);
     }
+
+    //test
     //Admin
     
     else if(msg.content.startsWith(`${prefix}setRPlayChannel`))
@@ -67,6 +87,11 @@ bot.on('message', msg => {
             msg.channel.send(embed);
         }
         return;
+    }
+    else if(msg.content.startsWith(`${prefix}setGlobal`))
+    {
+        const channel = msg.mentions.channels.first();
+        setGlobal = channel;
     }
     //Games
 
