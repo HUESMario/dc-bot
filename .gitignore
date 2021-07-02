@@ -17,4 +17,5 @@ node_modules/
 commands_dc/_Game/_data/games.json
 jspm_packages/
 
+serversForGlobalChat.json
 token.js

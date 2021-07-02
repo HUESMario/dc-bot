@@ -31,24 +31,38 @@ bot.on('message', msg => {
     msg.bankbalance = 0;
     msg.Player1 = msg.member;
     msg.Player2;
-
-    if(msg.channel === setGlobal && !msg.author.bot)
+    
+    const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
+    if(data[msg.channel.guild.id])
     {
-        const globalEmbed = new discord.MessageEmbed()
-        .setThumbnail(bot.user.avatarURL)
-        .setAuthor(msg.author.username, msg.author.avatarURL)
-        .setColor([180, 160, 50])
+    setGlobal = data[msg.channel.guild.id].globalChannel
+        if(msg.channel.id === setGlobal.id && !msg.author.bot)
+        {
+            const registeredGuilds = Object.keys(data);
+            for (let i = 0; i < registeredGuilds.length; ++i) {
+                const globalEmbed = new discord.MessageEmbed()
+                .setThumbnail(bot.user.avatarURL)
+                .setAuthor(msg.author.username, msg.author.avatarURL())
+                .setColor([180, 160, 50])
+                .setFooter(msg.guild.name, msg.guild.iconURL());
 
-        
-        if(msg.referenced_message){
-            console.log(msg.referenced_message.embeds[0].author.name);
-            globalEmbed.addFields({name: `antwortet auf: ${msg.referenced_message.embeds[0].author.name || msg.content.author.name}`, value: `${msg.referenced_message.content || msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`})
+
+                if(msg.referenced_message){
+                    globalEmbed.addFields({
+                        name: `antwortet auf: ${msg.referenced_message.embeds[0].author.name || msg.content.author.name}`, 
+                        value: `${msg.referenced_message.content || msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`,
+                        image: {
+                            url: msg.referenced_message.embeds[0].author.icon_url || msg.content.author.icon_url
+                        }
+                        })
+                }
+                globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
+                bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
+            }
+            msg.delete();
         }
-        globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
-
-        msg.channel.send(globalEmbed);
+        return;
     }
-
     if(msg.mentions.users.first())
     {
         msg.Player2 = msg.mentions.members.first()
@@ -90,8 +104,15 @@ bot.on('message', msg => {
     }
     else if(msg.content.startsWith(`${prefix}setGlobal`))
     {
-        const channel = msg.mentions.channels.first();
-        setGlobal = channel;
+            const data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
+            const oldChannels = JSON.parse(data);
+            const channel = msg.mentions.channels.first();
+            setGlobal = channel;
+            oldChannels[msg.guild.id] = {}
+            oldChannels[msg.guild.id].globalChannel = setGlobal;
+            fs.writeFileSync('./serversForGlobalChat.json', `${JSON.stringify(oldChannels)}`, (err) => {
+                if(err) console.log(err);
+            })
     }
     //Games
 
