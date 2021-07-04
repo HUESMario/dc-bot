@@ -20,7 +20,7 @@ let fields = [
     [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}]
 ]
 
-const TTT = (msg, discord) => {
+const TTT = async(msg, discord) => {
     msgCopy = msg;
     const data = require('./_data/games.json');
     Player1 = msg.Player1;
@@ -62,23 +62,31 @@ const TTT = (msg, discord) => {
     })
 }
 
-const handleTTT = (handleData) => {
-    const isCorrectPlayer = () => {
+const handleTTT = async (handleData) => {
+    const isCorrectPlayer = async () => {
         const splitedUser = tools.module.splitIDs(handleData.message.content);
-        console.log(handleData.clicker);
-        const clickedUser = handleData.clicker.user.id;
-        for(let i = 0; i < splitedUser.length; ++i)
+        const clickedUser = async () => {
+            return await handleData.clicker;
+        }
+        const getObject = await clickedUser();
+        if(splitedUser[0] === await getObject.user.id)
         {
-            if(splitedUser[i] === clickedUser || splitedUser[i] === clickedUser)
-            {
-                return true;
-            }
+            console.log('one');
+        }
+        if(splitedUser[1] === await getObject.user.id)
+        {
+            console.log('two');
+        }
+        console.log(await getObject.user)
+        if(splitedUser[0] === await getObject.user.id || splitedUser[1] === await getObject.user.id)
+        {
+            return true;
         }
         return false;
     }
 
 
-    if(isCorrectPlayer())
+    if(await isCorrectPlayer())
     {
         changeField(handleData);
         const connectedID = tools.module.extractID(handleData.message);
@@ -100,7 +108,7 @@ const handleTTT = (handleData) => {
         getPlayfield(handleData);
         handleData.message.delete();
     }
-    else if(!isCorrectPlayer())
+    else if(!await isCorrectPlayer())
     {
         handleData.channel.send("You aren't the one who was challenged or challenging.");
     }

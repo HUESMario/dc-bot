@@ -44,22 +44,34 @@ bot.on('message', msg => {
                 .setFooter(msg.guild.name, msg.guild.iconURL());
 
 
-                if(msg.referenced_message){
-                    globalEmbed.addFields({
-                        name: `antwortet auf: ${msg.referenced_message.embeds[0].author.name || msg.content.author.name}`, 
-                        value: `${msg.referenced_message.content || msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`,
-                        image: {
-                            url: msg.referenced_message.embeds[0].author.icon_url || msg.content.author.icon_url
-                        }
-                        })
-                        console.log(msg.referenced_message.embeds[0].author.icon_url || msg.content.author.icon_url);
+                if(!msg.referenceIsNull(msg.referenced_message)){
+                    if(msg.referenced_message.embeds.length === 0)
+                    {
+                        globalEmbed.addFields({
+                            name: `antwortet auf: ${msg.referenced_message.author.username}`, 
+                            value: `${msg.referenced_message.content}`,
+                            image: {
+                                url: msg.referenced_message.author.icon_url
+                            }
+                            })
+                    }
+                    else if(msg.referenced_message.embeds.length === 1)
+                    {
+                        globalEmbed.addFields({
+                            name: `antwortet auf: ${msg.referenced_message.embeds[0].author.name}`, 
+                            value: `${msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`,
+                            image: {
+                                url: msg.referenced_message.embeds[0].author.icon_url
+                            }
+                            })
+                    }
                 }
                 globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
                 bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
             }
             msg.delete();
+            return;
         }
-        return;
     }
     if(msg.mentions.users.first())
     {
