@@ -7,6 +7,7 @@ const tools = require('../../tools/tools.js');
 let Player1;
 let Player2;
 let msgCopy;
+let differentGame = {}
 
 const solutions = [
     [["0:0"], ["0:1"], ["0:2"], 0], [["1:0"],["1:1"],["1:2"], 1], [["2:0"], ["2:1"], ["2:2"], 2], 
@@ -69,44 +70,52 @@ const handleTTT = async (handleData) => {
             return await handleData.clicker;
         }
         const getObject = await clickedUser();
-        if(splitedUser[0] === await getObject.user.id)
-        {
-            console.log('one');
-        }
-        if(splitedUser[1] === await getObject.user.id)
-        {
-            console.log('two');
-        }
-        console.log(await getObject.user)
         if(splitedUser[0] === await getObject.user.id || splitedUser[1] === await getObject.user.id)
         {
             return true;
         }
         return false;
     }
-
+    const isCurrentPlayer = async () => {
+        const splitedUser = tools.module.splitIDs(handleData.message.content);
+        const clickedUser = async () => {
+            return await handleData.clicker;
+        }
+        const getObject = await clickedUser();
+        if(splitedUser[activePlayer] === await getObject.user.id)
+        {
+            return true;
+        }
+        return false;
+    }
 
     if(await isCorrectPlayer())
     {
-        changeField(handleData);
-        const connectedID = tools.module.extractID(handleData.message);
-        saveGameData(connectedID);
-        const newData = require('./_data/games.json');
-        fs.readFileSync('./commands_dc/_Game/_data/games.json', 'utf-8', (err, data) => {
-            data = JSON.parse(data);
+        if(await isCurrentPlayer())
+        {
+            const connectedID = tools.module.extractID(handleData.message);
+            const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/games.json', 'utf-8'))
             getGameData(connectedID, data);
-        })
-        if(checkForWin(handleData.message.components))
-        {
-            Won(handleData);
-            deleteGameData(connectedID, newData);
+            changeField(handleData);
+            saveGameData(connectedID);
+            const newData = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/games.json', 'utf-8'))
+            if(checkForWin(handleData.message.components))
+            {
+                Won(handleData);
+                deleteGameData(connectedID, newData);
+            }
+            else
+            {
+                changePlayer(); 
+            }
+            getPlayfield(handleData);
+            handleData.message.delete();
         }
-        else
+        else if(!await isCurrentPlayer())
         {
-            changePlayer(); 
+            console.log(activePlayer);
+            handleData.channel.send("It's not your Turn.");
         }
-        getPlayfield(handleData);
-        handleData.message.delete();
     }
     else if(!await isCorrectPlayer())
     {
@@ -128,30 +137,25 @@ const Won = (member) => {
 
 const saveGameData = async (connectedID) => {
     
-    fs.readFile('./commands_dc/_Game/_data/games.json','utf-8', (err, data) => {
+    const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/games.json','utf-8'))
+    console.log(connectedID);
+    data[connectedID] = {};
+    data[connectedID]["fields"] = fields;
+    data[connectedID]["activePlayer"] = activePlayer;
+    fs.writeFileSync('./commands_dc/_Game/_data/games.json', JSON.stringify(data), (err) => {
         if(err) throw err;
-
-        data = JSON.parse(data);
-
-        data[connectedID]["fields"] = fields;
-        data[connectedID]["activePlayer"] = activePlayer;
-        fs.writeFile('./commands_dc/_Game/_data/games.json', JSON.stringify(data), (err) => {
-            if(err) throw err;
-        })
     })
-    
 }
 
 const getGameData = async (connectedIDs, getData) => {
-    Player1 = getData[connectedIDs]["Player1"];
-    Player2 = getData[connectedIDs]["Player2"];
+    differentGame[connectedIDs] = {};
     fields = getData[connectedIDs]["fields"];
     activePlayer = getData[connectedIDs]["activePlayer"];
 }
 
 const deleteGameData =  (connectedID, getData) => {
-    delete getData[connectedIDs];
-    fs.writeFileSync('./_data/games.json', JSON.stringify(getData), (err) => {
+    delete getData[connectedID];
+    fs.writeFileSync('./commands_dc/_Game/_data/games.json', JSON.stringify(getData), (err) => {
         if(err) throw err;
     });
 }

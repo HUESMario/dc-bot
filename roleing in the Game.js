@@ -35,39 +35,46 @@ bot.on('message', msg => {
     setGlobal = data[msg.channel.guild.id].globalChannel
         if(msg.channel.id === setGlobal.id && !msg.author.bot)
         {
-            const registeredGuilds = Object.keys(data);
-            for (let i = 0; i < registeredGuilds.length; ++i) {
-                const globalEmbed = new discord.MessageEmbed()
-                .setThumbnail(bot.user.avatarURL)
-                .setAuthor(msg.author.username, msg.author.avatarURL())
-                .setColor([180, 160, 50])
-                .setFooter(msg.guild.name, msg.guild.iconURL());
+            if(msg.embeds.length === 0)
+            {
+                const registeredGuilds = Object.keys(data);
+                for (let i = 0; i < registeredGuilds.length; ++i) {
+                    const globalEmbed = new discord.MessageEmbed()
+                    .setThumbnail(bot.user.avatarURL)
+                    .setAuthor(msg.author.username, msg.author.avatarURL())
+                    .setColor([180, 160, 50])
+                    .setFooter(msg.guild.name, msg.guild.iconURL());
 
 
-                if(!msg.referenceIsNull(msg.referenced_message)){
-                    if(msg.referenced_message.embeds.length === 0)
-                    {
-                        globalEmbed.addFields({
-                            name: `antwortet auf: ${msg.referenced_message.author.username}`, 
-                            value: `${msg.referenced_message.content}`,
-                            image: {
-                                url: msg.referenced_message.author.icon_url
-                            }
-                            })
+                    if(!msg.referenceIsNull(msg.referenced_message)){
+                        if(msg.referenced_message.embeds.length === 0)
+                        {
+                            globalEmbed.addFields({
+                                name: `antwortet auf: ${msg.referenced_message.author.username}`, 
+                                value: `${msg.referenced_message.content}`,
+                                image: {
+                                    url: msg.referenced_message.author.icon_url
+                                }
+                                })
+                        }
+                        else if(msg.referenced_message.embeds.length === 1)
+                        {
+                            globalEmbed.addFields({
+                                name: `antwortet auf: ${msg.referenced_message.embeds[0].author.name}`, 
+                                value: `${msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`,
+                                image: {
+                                    url: msg.referenced_message.embeds[0].author.icon_url
+                                }
+                                })
+                        }
                     }
-                    else if(msg.referenced_message.embeds.length === 1)
-                    {
-                        globalEmbed.addFields({
-                            name: `antwortet auf: ${msg.referenced_message.embeds[0].author.name}`, 
-                            value: `${msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`,
-                            image: {
-                                url: msg.referenced_message.embeds[0].author.icon_url
-                            }
-                            })
-                    }
+                    globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
+                    bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
                 }
-                globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
-                bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
+            }
+            else if(msg.embeds.length > 0)
+            {
+                msg.channel.send('You cant send gifs.')
             }
             msg.delete();
             return;
