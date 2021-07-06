@@ -22,7 +22,8 @@ bot.on('ready', () => {
     console.log(`I'm driving and I'm speeding.`);
 })
 
-bot.on('message', msg => {
+bot.on('message',async msg => {
+    
     msg.color = '#13ab13';
     msg.seperator = `//\\\\\\ \n \\\\\\\\//`;
     msg.prefix = prefix;
@@ -35,8 +36,7 @@ bot.on('message', msg => {
     setGlobal = data[msg.channel.guild.id].globalChannel
         if(msg.channel.id === setGlobal.id && !msg.author.bot)
         {
-            if(msg.embeds.length === 0)
-            {
+            
                 const registeredGuilds = Object.keys(data);
                 for (let i = 0; i < registeredGuilds.length; ++i) {
                     const globalEmbed = new discord.MessageEmbed()
@@ -44,8 +44,6 @@ bot.on('message', msg => {
                     .setAuthor(msg.author.username, msg.author.avatarURL())
                     .setColor([180, 160, 50])
                     .setFooter(msg.guild.name, msg.guild.iconURL());
-
-
                     if(!msg.referenceIsNull(msg.referenced_message)){
                         if(msg.referenced_message.embeds.length === 0)
                         {
@@ -56,29 +54,36 @@ bot.on('message', msg => {
                                     url: msg.referenced_message.author.icon_url
                                 }
                                 })
-                        }
+                                
+                            }
                         else if(msg.referenced_message.embeds.length === 1)
                         {
                             globalEmbed.addFields({
                                 name: `antwortet auf: ${msg.referenced_message.embeds[0].author.name}`, 
-                                value: `${msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`,
+                                value: `> ${msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`,
                                 image: {
                                     url: msg.referenced_message.embeds[0].author.icon_url
                                 }
                                 })
                         }
                     }
-                    globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
-                    bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
-                }
+                        if(msg.embeds.length > 0)
+                        {
+                            globalEmbed.type = 'gifv';
+                            globalEmbed.attachFiles([msg.embeds[0].url + '.gif']);
+                        }
+                        else if(msg.attachments)
+                        {
+                            msg.attachments.forEach((e)=> {
+                                globalEmbed.setImage(e.url.toString())
+                            })
+                        }
+                        globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
+                        bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
+                    }
+                    msg.delete();
+                    return;
             }
-            else if(msg.embeds.length > 0)
-            {
-                msg.channel.send('You cant send gifs.')
-            }
-            msg.delete();
-            return;
-        }
     }
     if(msg.mentions.users.first())
     {
@@ -121,8 +126,9 @@ bot.on('message', msg => {
     }
     else if(msg.content.startsWith(`${prefix}setGlobal`))
     {
-            const data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
+            let data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
             const oldChannels = JSON.parse(data);
+            data = JSON.parse(data);
             const channel = msg.mentions.channels.first();
             setGlobal = channel;
             oldChannels[msg.guild.id] = {}
@@ -130,6 +136,43 @@ bot.on('message', msg => {
             fs.writeFileSync('./serversForGlobalChat.json', `${JSON.stringify(oldChannels)}`, (err) => {
                 if(err) console.log(err);
             })
+            data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'}));
+            const globalEmbed = new discord.MessageEmbed()
+                    .setThumbnail(bot.user.avatarURL)
+                    .setAuthor(msg.author.username, msg.author.avatarURL())
+                    .setColor([195, 96, 187])
+                    .setFooter(msg.guild.name, msg.guild.iconURL())
+                    .addField(`> newComer ${msg.guild.name}`, `${msg.guild.name} just joined RG Global`);
+                    const registeredGuilds = Object.keys(data);
+
+                    for(let i = 0; i < registeredGuilds.length; ++i)
+                    {
+                        bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
+                    }
+    }
+    else if(msg.content === `${prefix}delGlobal`)
+    {   
+        let data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
+            const oldChannels = JSON.parse(data);
+            data = JSON.parse(data);
+            const channel = msg.mentions.channels.first();
+            setGlobal = channel;
+            delete oldChannels[msg.guild.id];
+            fs.writeFileSync('./serversForGlobalChat.json', `${JSON.stringify(oldChannels)}`, (err) => {
+                if(err) console.log(err);
+            })
+            const globalEmbed = new discord.MessageEmbed()
+                    .setThumbnail(bot.user.avatarURL)
+                    .setAuthor(msg.author.username, msg.author.avatarURL())
+                    .setColor([195, 96, 56])
+                    .setFooter(msg.guild.name, msg.guild.iconURL())
+                    .addField(`> ${msg.guild.name} left Chat`, `${msg.guild.name} just left RG Global`);
+                    const registeredGuilds = Object.keys(data);
+
+                    for(let i = 0; i < registeredGuilds.length; ++i)
+                    {
+                        bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
+                    }
     }
     //Games
 

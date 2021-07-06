@@ -7,7 +7,6 @@ const tools = require('../../tools/tools.js');
 let Player1;
 let Player2;
 let msgCopy;
-let differentGame = {}
 
 const solutions = [
     [["0:0"], ["0:1"], ["0:2"], 0], [["1:0"],["1:1"],["1:2"], 1], [["2:0"], ["2:1"], ["2:2"], 2], 
@@ -26,6 +25,9 @@ const TTT = async(msg, discord) => {
     const data = require('./_data/games.json');
     Player1 = msg.Player1;
     Player2 = msg.Player2;
+    Player1.userID = Player1.user.id;
+    Player2.userID = Player2.user.id;
+    activePlayer = 0;
     fields = [
         [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
         [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
@@ -57,10 +59,8 @@ const TTT = async(msg, discord) => {
         msg.channel.send(embed);
 
     }
+    saveGameData(joinedIDs, data);
 
-    fs.writeFileSync('./commands_dc/_Game/_data/games.json', JSON.stringify(newGame), (err) => {
-        if(err) throw err;
-    })
 }
 
 const handleTTT = async (handleData) => {
@@ -88,32 +88,30 @@ const handleTTT = async (handleData) => {
         }
         return false;
     }
-
+    const connectedID = tools.module.extractID(handleData.message);
+    const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/games.json', 'utf-8'))
+    getGameData(connectedID, data);
     if(await isCorrectPlayer())
     {
         if(await isCurrentPlayer())
         {
-            const connectedID = tools.module.extractID(handleData.message);
-            const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/games.json', 'utf-8'))
-            getGameData(connectedID, data);
             changeField(handleData);
-            saveGameData(connectedID);
-            const newData = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/games.json', 'utf-8'))
-            if(checkForWin(handleData.message.components))
+            if(checkForWin(handleData.message.components) || !isTherePlace())
             {
-                Won(handleData);
-                deleteGameData(connectedID, newData);
+                gameEnd();
+                getPlayfield(handleData)
+                deleteGameData(connectedID, data);
             }
             else
             {
                 changePlayer(); 
+                saveGameData(connectedID, data);
+                getPlayfield(handleData)
             }
-            getPlayfield(handleData);
             handleData.message.delete();
         }
         else if(!await isCurrentPlayer())
         {
-            console.log(activePlayer);
             handleData.channel.send("It's not your Turn.");
         }
     }
@@ -123,9 +121,22 @@ const handleTTT = async (handleData) => {
     }
 }
 
-const Won = (member) => {
-    const data = require('./_data/games.json');
-    deleteGameData(Player1.user.id, Player2.user.id);
+const isTherePlace = () => {
+    for(let i = 0; i < fields.length; ++i)
+    {
+        for(let j = 0; j < fields[i].length; ++j)
+        {
+            if(fields[i][j].character === " ")
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+const gameEnd = () => {
+    deleteGameData(Player1.userID, Player2.userID);
     for(let i = 0; i < fields.length; ++i)
     {
         for(let j = 0; j < fields[i].length; ++j)
@@ -135,22 +146,22 @@ const Won = (member) => {
     }
 }
 
-const saveGameData = async (connectedID) => {
-    
-    const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/games.json','utf-8'))
-    console.log(connectedID);
+const saveGameData = (connectedID, data) => {
     data[connectedID] = {};
     data[connectedID]["fields"] = fields;
     data[connectedID]["activePlayer"] = activePlayer;
+    data[connectedID]["Player1"] = Player1;
+    data[connectedID]["Player2"] = Player2;
     fs.writeFileSync('./commands_dc/_Game/_data/games.json', JSON.stringify(data), (err) => {
         if(err) throw err;
     })
 }
 
-const getGameData = async (connectedIDs, getData) => {
-    differentGame[connectedIDs] = {};
+const getGameData = (connectedIDs, getData) => {
     fields = getData[connectedIDs]["fields"];
     activePlayer = getData[connectedIDs]["activePlayer"];
+    Player1 = getData[connectedIDs]["Player1"];
+    Player2 = getData[connectedIDs]["Player2"];
 }
 
 const deleteGameData =  (connectedID, getData) => {
@@ -225,11 +236,25 @@ const getPlayfield = (msg) => {
 
     if(activePlayer === 0)
     {
-        msg.channel.send(`${[Player1.user.id, Player2.user.id].join('&')}`, {components: [row1, row2, row3]});
+        if(msg.components !== undefined)
+        {
+            msg.channel.send(`${[Player1.userID, Player2.userID].join('&')}`, {components: [row1, row2, row3]})
+        }
+        else
+        {
+            msg.channel.send(`${msg.message.content}`, {components: [row1, row2, row3]});
+        }
     }
     else if(activePlayer === 1)
     {
-        msg.channel.send(`${[Player1.user.id, Player2.user.id].join('&')}`, {components: [row1, row2, row3]});
+        if(msg.components !== undefined)
+        {
+            msg.channel.send(`${[Player1.userID, Player2.userID].join('&')}`, {components: [row1, row2, row3]})
+        }
+        else
+        {
+            msg.channel.send(`${msg.message.content}`, {components: [row1, row2, row3]});
+        }
     }
     return [row1, row2, row3]
 }
@@ -258,21 +283,13 @@ const checkForWin = (componentsRows) => {
 }
 
 const changePlayer = () => {
-    if(activePlayer === 0)
-    {
-        activePlayer = 1;
-    }
-    else if(activePlayer === 1)
-    {
-        activePlayer = 0;
-    }
+    activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
 }
 
 const changeField = (button) => {
     const getIndexes = tools.module.extractPos(button.id)
     fields[getIndexes[0]][getIndexes[1]].character = playerChars[activePlayer][0]; 
     fields[getIndexes[0]][getIndexes[1]].style = playerChars[activePlayer][1]; 
-    button.message.components[getIndexes[0]].components[getIndexes[1]].label = playerChars[activePlayer][0];
 }
 
 exports.module = {
