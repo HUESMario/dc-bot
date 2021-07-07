@@ -5,8 +5,12 @@ npm-debug.log*
 
 # Dependency directories
 node_modules/
-commands_dc/_Game/_data/games.json
 jspm_packages/
+
+#game Data and unfinished Games
+
+commands_dc/_Game/_data/games.json
+commands_dc/_Game/TTT.js
 
 serversForGlobalChat.json
 token.js

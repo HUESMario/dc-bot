@@ -14,11 +14,12 @@ let prefix = 'rg!';
 let channelForRolePlay;
 let setGlobal;
 
-bot.on('clickButton', async (button) => {
+/*bot.on('clickButton', async (button) => {
     button.button = disbut;
     commands.module.Game.TTT.handleClick(button);
     await button.defer();
 })
+*/
 
 bot.on('ready', () => {
     console.log(`I'm driving and I'm speeding.`);
@@ -28,12 +29,18 @@ bot.on('message',async msg => {
     msg.color = '#13ab13';
     msg.seperator = `//\\\\\\ \n \\\\\\\\//`;
     msg.prefix = prefix;
-    msg.Player1 = msg.member;
+    /*msg.Player1 = msg.member;
     msg.Player2;
-    
+    */
+
     const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
     if(data[msg.channel.guild.id])
     {
+        if(msg.author.bot && msg.author.id !== '842053072666099733')
+        {
+            msg.delete();
+            return;
+        }
     setGlobal = data[msg.channel.guild.id].globalChannel
         if(msg.channel.id === setGlobal.id && !msg.author.bot)
         {
@@ -71,18 +78,18 @@ bot.on('message',async msg => {
                     }
                         if(oldMsg.embeds.length > 0)
                         {
-                        const getURLs = async url => {
-                            return await UrlofImages(url);
-                        }
-                        const URLs = await getURLs(oldMsg.embeds[0].url);
-                        const getIndex = () => {
-                            for(let j = 0; j < URLs.length; ++j)
-                            {
-                                if(queryString.parse(URLs[j].url)[URLs[j].url] === undefined) {
-                                    return j;
-                                } 
+                            const getURLs = async url => {
+                                return await UrlofImages(url);
                             }
-                        }
+                            const URLs = await getURLs(oldMsg.embeds[0].url);
+                            const getIndex = () => {
+                                for(let j = 0; j < URLs.length; ++j)
+                                {
+                                    if(queryString.parse(URLs[j].url)[URLs[j].url] === undefined) {
+                                        return j;
+                                    } 
+                                }
+                            }
                             globalEmbed.addField(`> ${oldMsg.author.username}`, `sent gif:`)
                             globalEmbed.setImage(await URLs[getIndex()].url)
                         }
@@ -101,10 +108,11 @@ bot.on('message',async msg => {
                     return;
             }
     }
-    if(msg.mentions.users.first())
+    /*if(msg.mentions.users.first())
     {
         msg.Player2 = msg.mentions.members.first()
     }
+    */
     //Help
     if(msg.content == `${prefix}help`)
     {
@@ -198,7 +206,7 @@ bot.on('message',async msg => {
         msg.tool = {checkForChannel: tools.module.checkForChannel};
         commands.module.Game.deposit(msg, discord);
     }
-    else if(msg.content.startsWith(`${prefix}TTT`))
+    /*else if(msg.content.startsWith(`${prefix}TTT`))
     {
         if(msg.mentions.users.first() === undefined)
         {
@@ -211,6 +219,7 @@ bot.on('message',async msg => {
         msg.button = disbut;
         commands.module.Game.TTT.run(msg, discord);
     }
+    */
 });
 
 bot.login(token.module.token);
