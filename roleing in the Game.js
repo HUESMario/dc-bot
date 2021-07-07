@@ -8,6 +8,8 @@ const commands = require('./commands_dc/commands.js');
 const tools = require('./tools/tools.js');
 const fs = require('fs');
 const token = require('./token.js');
+const UrlofImages = require('get-image-urls');
+const queryString = require('querystring');
 let prefix = 'rg!';
 let channelForRolePlay;
 let setGlobal;
@@ -23,7 +25,6 @@ bot.on('ready', () => {
 })
 
 bot.on('message',async msg => {
-    
     msg.color = '#13ab13';
     msg.seperator = `//\\\\\\ \n \\\\\\\\//`;
     msg.prefix = prefix;
@@ -36,22 +37,23 @@ bot.on('message',async msg => {
     setGlobal = data[msg.channel.guild.id].globalChannel
         if(msg.channel.id === setGlobal.id && !msg.author.bot)
         {
-            
+                const oldMsg = msg;
+                msg.delete();
                 const registeredGuilds = Object.keys(data);
                 for (let i = 0; i < registeredGuilds.length; ++i) {
                     const globalEmbed = new discord.MessageEmbed()
                     .setThumbnail(bot.user.avatarURL)
-                    .setAuthor(msg.author.username, msg.author.avatarURL())
+                    .setAuthor(oldMsg.author.username, oldMsg.author.avatarURL())
                     .setColor([180, 160, 50])
-                    .setFooter(msg.guild.name, msg.guild.iconURL());
-                    if(!msg.referenceIsNull(msg.referenced_message)){
-                        if(msg.referenced_message.embeds.length === 0)
+                    .setFooter(oldMsg.guild.name, oldMsg.guild.iconURL());
+                    if(!oldMsg.referenceIsNull(oldMsg.referenced_message)){
+                        if(oldMsg.referenced_message.embeds.length === 0)
                         {
                             globalEmbed.addFields({
-                                name: `antwortet auf: ${msg.referenced_message.author.username}`, 
-                                value: `${msg.referenced_message.content}`,
+                                name: `antwortet auf: ${oldMsg.referenced_message.author.username}`, 
+                                value: `${oldMsg.referenced_message.content}`,
                                 image: {
-                                    url: msg.referenced_message.author.icon_url
+                                    url: oldMsg.referenced_message.author.icon_url
                                 }
                                 })
                                 
@@ -59,29 +61,43 @@ bot.on('message',async msg => {
                         else if(msg.referenced_message.embeds.length === 1)
                         {
                             globalEmbed.addFields({
-                                name: `antwortet auf: ${msg.referenced_message.embeds[0].author.name}`, 
-                                value: `> ${msg.referenced_message.embeds[0].fields[msg.referenced_message.embeds[0].fields.length - 1].value}`,
+                                name: `antwortet auf: ${oldMsg.referenced_message.embeds[0].author.name}`, 
+                                value: `> ${oldMsg.referenced_message.embeds[0].fields[oldMsg.referenced_message.embeds[0].fields.length - 1].value}`,
                                 image: {
-                                    url: msg.referenced_message.embeds[0].author.icon_url
+                                    url: oldMsg.referenced_message.embeds[0].author.icon_url
                                 }
                                 })
                         }
                     }
-                        if(msg.embeds.length > 0)
+                        if(oldMsg.embeds.length > 0)
                         {
-                            globalEmbed.type = 'gifv';
-                            globalEmbed.attachFiles([msg.embeds[0].url + '.gif']);
+                        const getURLs = async url => {
+                            return await UrlofImages(url);
                         }
-                        else if(msg.attachments)
+                        const URLs = await getURLs(oldMsg.embeds[0].url);
+                        const getIndex = () => {
+                            for(let j = 0; j < URLs.length; ++j)
+                            {
+                                if(queryString.parse(URLs[j].url)[URLs[j].url] === undefined) {
+                                    return j;
+                                } 
+                            }
+                        }
+                            globalEmbed.addField(`> ${oldMsg.author.username}`, `sent gif:`)
+                            globalEmbed.setImage(await URLs[getIndex()].url)
+                        }
+                        else if(oldMsg.attachments.toJSON().length > 0)
                         {
-                            msg.attachments.forEach((e)=> {
+                            oldMsg.attachments.forEach((e)=> {
                                 globalEmbed.setImage(e.url.toString())
                             })
                         }
-                        globalEmbed.addFields({name: 'rg Global', value: `${msg.content}`})
+                        if(oldMsg.content !== '')
+                        {
+                            globalEmbed.addFields({name: 'rg Global', value: `${oldMsg.content}`})
+                        }
                         bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
                     }
-                    msg.delete();
                     return;
             }
     }
@@ -196,7 +212,5 @@ bot.on('message',async msg => {
         commands.module.Game.TTT.run(msg, discord);
     }
 });
-
-
 
 bot.login(token.module.token);
