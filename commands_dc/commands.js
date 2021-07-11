@@ -6,6 +6,8 @@ const setRPC = require('./Admin/setRPC.js');
 //Games
 const deposit = require('./_Game/deposit.js');
 const TTT = require('./_Game/TTT.js');
+//Different
+const getHappy = require('./lol.js');
 
 exports.module = {
     help: { 
@@ -21,6 +23,10 @@ exports.module = {
             handleClick: TTT.module.handleClick
         },
         deposit: deposit.module.deposit
+    },
+    Different:
+    {
+        getHappy: getHappy.module.getHappy
     }
     
 }
