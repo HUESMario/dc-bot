@@ -1,6 +1,7 @@
 const getURLSFromImages = require('get-image-urls');
 const discord = require('discord.js');
 const queryString = require('querystring');
+const psList = require('ps-list');
 const fs = require('fs');
 
 class queueList
@@ -9,10 +10,28 @@ class queueList
         this.gifList[size] = item;
     }
 
-    workOnNext = async (channels) => {
+    
+
+    workOnNext = (channels) => {
+        const currentGif = this.gifList[0];
+        if(this.size === 0) return;
+        const deleteFirst = () => {
+            let newList = [];
+
+            for(let i = 0; i < this.size; ++i)
+            {
+                if(this.gifList[i + 1]) newList[i] = this.gifList[i + 1]
+            }
+            this.gifList = newList;
+        }
+        
+        deleteFirst();
+        if(this.size !== 0)
+        {
         const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
         const registeredGuilds = Object.keys(data);
-        getURLSFromImages(this.gifList[0].gif.url).then(urls => {
+        getURLSFromImages(currentGif.gif.url).then(urls => {
+            console.log('done')
             const getIndex = (urlList) => {
                 for(let i = 0; i < urlList.length; ++i)
                 {
@@ -21,34 +40,25 @@ class queueList
                     } 
                 }
             }
-
-            const deleteFirst = () => {
-                let newList = [];
-                for(let i = 0; i < this.size; ++i)
-                {
-                    if(this.gifList[i + 1] !== undefined) newList[i] = this.gifList[i + 1]
-                }
-                this.gifList = newList;
-                --this.size;
-            }
-
-            console.log(this.gifList);
-            
-            const globalEmbed = new discord.MessageEmbed();
-            globalEmbed.setThumbnail(this.gifList[0].msg.bot.user.avatarURL)
-            globalEmbed.setAuthor(this.gifList[0].msg.author.username, this.gifList[0].msg.author.avatarURL())
-            globalEmbed.setColor(this.gifList[0].msg.color)
-            globalEmbed.setFooter(this.gifList[0].user.username, this.gifList[0].msg.guild.iconURL());
-            globalEmbed.addField(`> ${this.gifList[0].user.username}`, `sent gif:`)
-            globalEmbed.setImage(urls[getIndex(urls)].url)
+                
+                    const globalEmbed = new discord.MessageEmbed();
+                    globalEmbed.setThumbnail(currentGif.msg.bot.user.avatarURL)
+                    globalEmbed.setAuthor(currentGif.msg.author.username, currentGif.msg.author.avatarURL())
+                    globalEmbed.setColor(currentGif.msg.color)
+                    globalEmbed.setFooter(currentGif.user.username, currentGif.msg.guild.iconURL());
+                    globalEmbed.addField(`> ${currentGif.user.username}`, `sent gif:`)
+                    globalEmbed.setImage(urls[getIndex(urls)].url)
+                
+                    for(let i = 0; i < registeredGuilds.length; ++i)
+                    {
+                        channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
+                    }
         
-            for(let i = 0; i < registeredGuilds.length; ++i)
-            {
-                channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
-            }
-            deleteFirst();
-        })
-    }
+    }).catch(err => { console.log(err) });
+        }
+        --this.size;
+};
+
 
     returnLength = () => {
         return this.size;
@@ -60,7 +70,7 @@ class queueList
     }   
     size = 0;
     gifList = [];
-}
+};
 
 class queueItem
 {
@@ -78,4 +88,4 @@ class queueItem
 exports.module = {
     queueList: queueList,
     queueItem: queueItem
-}
+};

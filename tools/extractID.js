@@ -1,5 +1,5 @@
 const extractID = (message) => {
-    return message.content;
+    return message.value;
 }
 exports.module = {
     extractID: extractID

@@ -16,12 +16,10 @@ let prefix = 'rg!';
 let channelForRolePlay;
 let setGlobal;
 
-/*bot.on('clickButton', async (button) => {
+bot.on('clickButton', (button) => {
     button.button = disbut;
     commands.module.Game.TTT.handleClick(button);
-    await button.defer();
 })
-*/
 
 bot.on('ready', () => {
     console.log(`I'm driving and I'm speeding.`);
@@ -33,17 +31,9 @@ bot.on('message',async msg => {
         msg.color = '#13ab13';
         msg.seperator = `//\\\\\\ \n \\\\\\\\//`;
         msg.prefix = prefix;
-        /*
         msg.Player1 = msg.member;
         msg.Player2;
-        */
-        if(Object.values(processes).indexOf('phantomjs.exe') <= -1){
-            if(queueList.returnLength() > 0)
-            {
-                console.log(queueList);
-                await queueList.workOnNext(bot.channels);
-            }
-        }
+        
 
         const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
         if(data[msg.channel.guild.id])
@@ -61,7 +51,7 @@ bot.on('message',async msg => {
                     const registeredGuilds = Object.keys(data);
                     for (let i = 0; i < registeredGuilds.length; ++i) {
                         const globalEmbed = new discord.MessageEmbed()
-                        .setThumbnail(bot.user.avatarURL)
+                        .setThumbnail(bot.user.avatarURL())
                         .setAuthor(oldMsg.author.username, oldMsg.author.avatarURL())
                         .setColor(msg.color)
                         .setFooter(oldMsg.guild.name, oldMsg.guild.iconURL());
@@ -95,6 +85,14 @@ bot.on('message',async msg => {
                                 oldMsg.bot = bot;
                                 queueItem.addGif(oldMsg.embeds[0], oldMsg.author, oldMsg, bot.channels);
                                 queueList.addGif(queueItem);
+
+                                if(Object.values(processes).indexOf('phantomjs.exe') <= -1){
+                                    if(queueList.returnLength() > 0 && !msg.author.bot)
+                                    {
+                                        queueList.workOnNext(bot.channels);
+                                    }
+                                }
+
                                 return;
                             }
                             else if(oldMsg.attachments.toJSON().length > 0)
@@ -105,14 +103,16 @@ bot.on('message',async msg => {
                             }
                             if(oldMsg.content.startsWith('rg!imBored'))
                         {   
-                            commands.module.Different.getHappy((sentence)=>{
-                                console.log(sentence);
-                                globalEmbed.addField('imBored', sentence);
+                            const text = commands.module.Different.getHappy();
+                            console.log(text);
+                            text.then(value => {
+                                globalEmbed.setAuthor(bot.user.username, bot.user.avatarURL())
+                                globalEmbed.addField('Gelangweilt? Jetzt nicht mehr!', `Aktivität: ${value.activity} \n link: ${value.link} \n teilnehmende: ${value.participants} \n Art der Aktivität: ${value.type}`);
                                 bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
-                            })
+                            }).catch(err=>{console.log(err)});
                             
                         }
-                            if(oldMsg.content !== '')
+                            if(oldMsg.content !== '' && oldMsg.content !== 'rg!imBored')
                             {
                                 globalEmbed.addFields({name: 'rg Global', value: `${oldMsg.content}`})
                             }
@@ -124,11 +124,10 @@ bot.on('message',async msg => {
                         return;
                 }
         }
-        /*if(msg.mentions.users.first())
+        if(msg.mentions.users.first())
         {
             msg.Player2 = msg.mentions.members.first()
         }
-        */
         //Help
         if(msg.content == `${prefix}help`)
         {
@@ -140,8 +139,6 @@ bot.on('message',async msg => {
             msg.button = new disbut.MessageButton();
             commands.module.help.source(msg, discord);
         }
-
-        //test
         //Admin
         
         else if(msg.content.startsWith(`${prefix}setRPlayChannel`))
@@ -222,7 +219,7 @@ bot.on('message',async msg => {
             msg.tool = {checkForChannel: tools.module.checkForChannel};
             commands.module.Game.deposit(msg, discord);
         }
-        /*else if(msg.content.startsWith(`${prefix}TTT`))
+        else if(msg.content.startsWith(`${prefix}TTT`))
         {
             if(msg.mentions.users.first() === undefined)
             {
@@ -235,7 +232,19 @@ bot.on('message',async msg => {
             msg.button = disbut;
             commands.module.Game.TTT.run(msg, discord);
         }
-        */
+        else if(msg.content.startsWith(`${prefix}testEmbed`))
+        {
+            const embed = new discord.MessageEmbed()
+            .addField('greetings');
+
+            const upper_left = new disbut.MessageButton()
+            .setID('0:0')
+            .setStyle(4)
+            .setLabel('Test Button')
+            .setDisabled(true);
+
+            msg.channel.send({embed: embed, component: upper_left})
+        }
     });
 });
 

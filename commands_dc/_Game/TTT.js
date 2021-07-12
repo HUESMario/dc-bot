@@ -4,6 +4,7 @@ let activePlayer = 0;
 const playerChars = [['X', 1], ['O', 3]];
 const fs = require('fs');
 const tools = require('../../tools/tools.js');
+const discord = require('discord.js')
 let Player1;
 let Player2;
 let msgCopy;
@@ -64,36 +65,36 @@ const TTT = async(msg, discord) => {
 }
 
 const handleTTT = async (handleData) => {
-    const isCorrectPlayer = async () => {
-        const splitedUser = tools.module.splitIDs(handleData.message.content);
-        const clickedUser = async () => {
-            return await handleData.clicker;
+    const isCorrectPlayer = () => {
+        const splitedUser = tools.module.splitIDs(handleData.message.embeds[0].fields[0].value);
+        const clickedUser = () => {
+            return handleData.clicker;
         }
-        const getObject = await clickedUser();
-        if(splitedUser[0] === await getObject.user.id || splitedUser[1] === await getObject.user.id)
+        const getObject = clickedUser();
+        if(splitedUser[0] === getObject.user.id || splitedUser[1] === getObject.user.id)
         {
             return true;
         }
         return false;
     }
-    const isCurrentPlayer = async () => {
-        const splitedUser = tools.module.splitIDs(handleData.message.content);
-        const clickedUser = async () => {
-            return await handleData.clicker;
+    const isCurrentPlayer = () => {
+        const splitedUser = tools.module.splitIDs(handleData.message.embeds[0].fields[0].value);
+        const clickedUser = () => {
+            return handleData.clicker;
         }
-        const getObject = await clickedUser();
-        if(splitedUser[activePlayer] === await getObject.user.id)
+        const getObject = clickedUser();
+        if(splitedUser[activePlayer] === getObject.user.id)
         {
             return true;
         }
         return false;
     }
-    const connectedID = tools.module.extractID(handleData.message);
+    const connectedID = tools.module.extractID(handleData.message.embeds[0].fields[0]);
     const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/games.json', 'utf-8'))
     getGameData(connectedID, data);
-    if(await isCorrectPlayer())
+    if(isCorrectPlayer())
     {
-        if(await isCurrentPlayer())
+        if(isCurrentPlayer())
         {
             changeField(handleData);
             if(checkForWin(handleData.message.components) || !isTherePlace())
@@ -110,12 +111,12 @@ const handleTTT = async (handleData) => {
             }
             handleData.message.delete();
         }
-        else if(!await isCurrentPlayer())
+        else if(!isCurrentPlayer())
         {
             handleData.channel.send("It's not your Turn.");
         }
     }
-    else if(!await isCorrectPlayer())
+    else if(!isCorrectPlayer())
     {
         handleData.channel.send("You aren't the one who was challenged or challenging.");
     }
@@ -172,6 +173,32 @@ const deleteGameData =  (connectedID, getData) => {
 }
 
 const getPlayfield = (msg) => {
+
+    const playerEmbed = new discord.MessageEmbed();
+
+    playerEmbed.addField('Player IDs:', `${[Player1.userID, Player2.userID].join('&')}`);
+    if(activePlayer === 0)
+    {
+        if(!Player1.user)
+        {
+            playerEmbed.addField('active Player: ', Player1.displayName)
+        }
+        else
+        {
+            playerEmbed.addField('active Player: ', Player1.user.username)
+        }
+    }
+    else
+    {
+        if(!Player2.user)
+        {
+            playerEmbed.addField('active Player: ', Player2.displayName)
+        }
+        else
+        {
+            playerEmbed.addField('active Player: ', Player2.user.username)
+        }
+    }
     const upper_left = new msg.button.MessageButton()
     .setID('0:0')
     .setStyle(fields[0][0].style)
@@ -219,6 +246,8 @@ const getPlayfield = (msg) => {
     .setStyle(fields[2][2].style)
     .setLabel(fields[2][2].character)
     .setDisabled(fields[2][2].Disabled);
+
+
     const row1 = new msg.button.MessageActionRow()
     .addComponent(upper_left)
     .addComponent(upper_middle)
@@ -234,28 +263,8 @@ const getPlayfield = (msg) => {
     .addComponent(buttom_middle)
     .addComponent(buttom_right);
 
-    if(activePlayer === 0)
-    {
-        if(msg.components !== undefined)
-        {
-            msg.channel.send(`${[Player1.userID, Player2.userID].join('&')}`, {components: [row1, row2, row3]})
-        }
-        else
-        {
-            msg.channel.send(`${msg.message.content}`, {components: [row1, row2, row3]});
-        }
-    }
-    else if(activePlayer === 1)
-    {
-        if(msg.components !== undefined)
-        {
-            msg.channel.send(`${[Player1.userID, Player2.userID].join('&')}`, {components: [row1, row2, row3]})
-        }
-        else
-        {
-            msg.channel.send(`${msg.message.content}`, {components: [row1, row2, row3]});
-        }
-    }
+    
+            msg.channel.send({embed: playerEmbed,components: [row1, row2, row3]});
     return [row1, row2, row3]
 }
 

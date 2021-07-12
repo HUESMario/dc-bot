@@ -1,24 +1,10 @@
-const http = require('http');
+const superagent = require('superagent');
 
-const getHappy = (sendMsg) => {
-
-    const options = {
-        hostname: 'www.boredapi.com',
-        path: '/api/activity/',
-        method: 'GET'
-    }
-    
-    http.request(options, (response) => {
-        const chunks = [];
-        response.on('data', (data) => {
-            console.log(data);
-            chunks.push(data);
-        })
-
-        response.on('end', () => {
-            sendMsg(Buffer.concat(chunks));
-            console.log(Buffer.concat(chunks));
-        })
+const getHappy = () => {
+    return new Promise(function(resolve, reject){
+    superagent.get('www.boredapi.com/api/activity').then((object)=>{
+            resolve(JSON.parse(object.text));
+        }).catch(e => {reject(e)})
     })
 }
 

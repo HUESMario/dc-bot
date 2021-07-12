@@ -5,11 +5,13 @@
   "main": "roleing in the Game.js",
   "dependencies": {
     "discord-buttons": "^3.2.1",
+    "discord-tictactoe": "^2.1.1",
     "discord.js": "^12.5.3",
     "get-image-urls": "^1.0.5",
     "mongodb": "^3.6.9",
     "omdb": "^0.8.0",
-    "ps-list": "^7.2.0"
+    "ps-list": "^7.2.0",
+    "superagent": "^6.1.0"
   },
   "devDependencies": {},
   "scripts": {
