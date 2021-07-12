@@ -4,7 +4,7 @@ const source = (msg, discord) => {
     .setColor(msg.color)
     .setTitle(`roleing in the Game`)
     .setAuthor(msg.author.username)
-    .addFields({name: "> `Source`", value: `Drück auf den Knopf um auf mein Github zu kommen.^^`})  
+    .addFields({name: "> `Source`", value: `Press the Button to go to my Github.^^`})  
     .setFooter(msg.guild.name, msg.guild.iconURL());
 
     msg.button

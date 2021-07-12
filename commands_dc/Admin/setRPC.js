@@ -7,7 +7,7 @@ const setRPC = (msg, discord) => {
         .setColor(msg.color)
         .setTitle(`roleing in the Game`)
         .setAuthor(msg.author.username)
-        .addFields({name: "> `Erfolg!`", value: `Toll, jetzt kannst du den ganzen Bot nutzen.^^ `})
+        .addFields({name: "> `Erfolg!`", value: `Great, now you can use the Whole Bot.^^ `})
         .setFooter(msg.guild.name, msg.guild.iconURL());
 
         msg.channel.send(embed);

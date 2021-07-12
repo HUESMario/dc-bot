@@ -107,7 +107,7 @@ bot.on('message',async msg => {
                             console.log(text);
                             text.then(value => {
                                 globalEmbed.setAuthor(bot.user.username, bot.user.avatarURL())
-                                globalEmbed.addField('Gelangweilt? Jetzt nicht mehr!', `Aktivität: ${value.activity} \n link: ${value.link} \n teilnehmende: ${value.participants} \n Art der Aktivität: ${value.type}`);
+                                globalEmbed.addField('Bored? Not anymore!', `activity: ${value.activity} \n link: ${value.link} \n Your need of Friends: ${value.participants - 1} \n Type of activity: ${value.type}`);
                                 bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
                             }).catch(err=>{console.log(err)});
                             
@@ -141,7 +141,7 @@ bot.on('message',async msg => {
         }
         //Admin
         
-        else if(msg.content.startsWith(`${prefix}setRPlayChannel`))
+        /*else if(msg.content.startsWith(`${prefix}setRPlayChannel`))
         {
             const Channel = msg.mentions.channels.first()
             if(Channel !== undefined)
@@ -155,12 +155,13 @@ bot.on('message',async msg => {
                 .setColor(msg.color)
                 .setTitle(`roleing in the Game`)
                 .setAuthor(msg.author.username)
-                .addFields({name: "> `Error!`", value: `Du hast keinen Channel Erwähnt.`})
+                .addFields({name: "> `Error!`", value: `You didnt Chose an Channel.`})
                 .setFooter(msg.guild.name, msg.guild.iconURL());
                 msg.channel.send(embed);
             }
             return;
         }
+        */
         else if(msg.content.startsWith(`${prefix}setGlobal`))
         {
                 let data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
@@ -224,7 +225,7 @@ bot.on('message',async msg => {
             if(msg.mentions.users.first() === undefined)
             {
                 const embed = new discord.MessageEmbed()
-                .addFields({name:`Error!`, value: `> Du musst noch einen Gegner pingen ^^`});
+                .addFields({name:`Error!`, value: `> You need to Mention an Opponnent. ^^`});
                 
                 msg.channel.send(embed);
                 return;

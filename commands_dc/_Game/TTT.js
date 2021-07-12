@@ -97,10 +97,10 @@ const handleTTT = async (handleData) => {
         if(isCurrentPlayer())
         {
             changeField(handleData);
-            if(checkForWin(handleData.message.components) || !isTherePlace())
+            if(checkForWin(fields) || !isTherePlace())
             {
                 gameEnd();
-                getPlayfield(handleData)
+                getPlayfield(handleData, true);
                 deleteGameData(connectedID, data);
             }
             else
@@ -165,38 +165,52 @@ const getGameData = (connectedIDs, getData) => {
     Player2 = getData[connectedIDs]["Player2"];
 }
 
-const deleteGameData =  (connectedID, getData) => {
+const deleteGameData = (connectedID, getData) => {
     delete getData[connectedID];
     fs.writeFileSync('./commands_dc/_Game/_data/games.json', JSON.stringify(getData), (err) => {
         if(err) throw err;
     });
 }
 
-const getPlayfield = (msg) => {
+const getPlayfield = (msg, won = false) => {
 
     const playerEmbed = new discord.MessageEmbed();
 
     playerEmbed.addField('Player IDs:', `${[Player1.userID, Player2.userID].join('&')}`);
     if(activePlayer === 0)
     {
-        if(!Player1.user)
+        if(!won)
         {
-            playerEmbed.addField('active Player: ', Player1.displayName)
+            if(!Player1.user)
+            {
+                playerEmbed.addField('active Player: ', Player1.displayName)
+            }
+            else
+            {
+                playerEmbed.addField('active Player: ', Player1.user.username)
+            }
         }
-        else
+        else if(won)
         {
-            playerEmbed.addField('active Player: ', Player1.user.username)
+            playerEmbed.addField('Player who won: ', Player1.displayName)
         }
     }
     else
     {
-        if(!Player2.user)
+        if(!won)
         {
-            playerEmbed.addField('active Player: ', Player2.displayName)
+            if(!Player2.user)
+            {
+                playerEmbed.addField('active Player: ', Player2.displayName)
+            }
+            else
+            {
+                playerEmbed.addField('active Player: ', Player2.user.username)
+            }
         }
-        else
+        else if(won)
         {
-            playerEmbed.addField('active Player: ', Player2.user.username)
+            playerEmbed.addField('Player who won: ', Player2.displayName)
         }
     }
     const upper_left = new msg.button.MessageButton()
@@ -276,10 +290,10 @@ const checkForWin = (componentsRows) => {
             const position1 = tools.module.extractPos(solution[0]);
             const position2 = tools.module.extractPos(solution[1]);
             const position3 = tools.module.extractPos(solution[2]);
-            let button1 = componentsRows[position1[0]].components[position1[1]];
-            let button2 = componentsRows[position2[0]].components[position2[1]];
-            let button3 = componentsRows[position3[0]].components[position3[1]];
-            if(button1.label === playerChars[activePlayer][0] && button2.label === playerChars[activePlayer][0] && button3.label === playerChars[activePlayer][0])
+            let button1 = componentsRows[position1[0]][position1[1]];
+            let button2 = componentsRows[position2[0]][position2[1]];
+            let button3 = componentsRows[position3[0]][position3[1]];
+            if(button1.character === playerChars[activePlayer][0] && button2.character === playerChars[activePlayer][0] && button3.character === playerChars[activePlayer][0])
             {
                 fields[position1[0]][position1[1]].style = 4;
                 fields[position2[0]][position2[1]].style = 4;
