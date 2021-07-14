@@ -56,9 +56,9 @@ bot.on('message',async msg => {
                     .setAuthor(oldMsg.author.username, oldMsg.author.avatarURL())
                     .setColor(msg.color)
                     .setFooter(oldMsg.guild.name, oldMsg.guild.iconURL());
+                    if(message.reference)
+                    {
                     const referenceMSG = await msg.channel.messages.fetch(msg.reference.messageID);
-                    
-                    if(referenceMSG){
                         if(referenceMSG.embeds.length === 0)
                         {
                             globalEmbed.addFields({
