@@ -36,7 +36,7 @@ bot.on('message',async msg => {
     msg.Player1 = msg.member;
     msg.Player2;
 
-    psList().then(processes =>{
+    psList().then(async processes =>{
     const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
     if(data[msg.channel.guild.id])
     {
