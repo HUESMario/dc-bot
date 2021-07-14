@@ -28,6 +28,19 @@ const TTT = async(msg, discord) => {
     Player2 = msg.Player2;
     Player1.userID = Player1.user.id;
     Player2.userID = Player2.user.id;
+
+    if(Player1.userID === Player2.userID)
+    {
+        const embed = new discord.MessageEmbed()
+        .setColor(msg.color)
+        .setTitle(`roleing in the Game - Tik Tak Toe`)
+        .setAuthor(msg.author.username)
+        .addFields({name: "> TTT", value: `Lonely? Choose one to Play with you ^^!`})
+        .setFooter(msg.guild.name, msg.guild.iconURL())
+
+        msg.channel.send(embed);
+        return;
+    }
     activePlayer = 0;
     fields = [
         [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
@@ -46,7 +59,6 @@ const TTT = async(msg, discord) => {
             "fields": fields,
             "activePlayer": activePlayer
         }
-        saveGameData(joinedIDs, data);
         getPlayfield(msg);
     }
     else if(data[joinedIDs] !== undefined)
@@ -59,8 +71,8 @@ const TTT = async(msg, discord) => {
         .setFooter(msg.guild.name, msg.guild.iconURL())
 
         msg.channel.send(embed);
-
     }
+    saveGameData(joinedIDs, data);
 
 }
 
