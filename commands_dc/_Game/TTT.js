@@ -46,6 +46,7 @@ const TTT = async(msg, discord) => {
             "fields": fields,
             "activePlayer": activePlayer
         }
+        saveGameData(joinedIDs, data);
         getPlayfield(msg);
     }
     else if(data[joinedIDs] !== undefined)
@@ -60,7 +61,6 @@ const TTT = async(msg, discord) => {
         msg.channel.send(embed);
 
     }
-    saveGameData(joinedIDs, data);
 
 }
 
