@@ -9,8 +9,8 @@ npm-debug.log*
 
 #game Data and unfinished Games
 
-#commands_dc/_Game/_data/games.json
-#commands_dc/_Game/TTT.js
+commands_dc/_Game/_data/games.json
+commands_dc/_Game/TTT.js
 
-#serversForGlobalChat.json
-#token.js
+serversForGlobalChat.json
+token.js
