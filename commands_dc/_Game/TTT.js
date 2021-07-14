@@ -23,7 +23,7 @@ let fields = [
 
 const TTT = async(msg, discord) => {
     msgCopy = msg;
-    const data = require('./_data/games.json');
+    const data = fs.readFileSync('./_data/games.json');
     Player1 = msg.Player1;
     Player2 = msg.Player2;
     Player1.userID = Player1.user.id;
