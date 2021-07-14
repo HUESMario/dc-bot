@@ -1,7 +1,6 @@
 const getURLSFromImages = require('get-image-urls');
 const discord = require('discord.js');
 const queryString = require('querystring');
-const psList = require('ps-list');
 const fs = require('fs');
 
 class queueList

@@ -6,6 +6,8 @@ const disbut = require('discord-buttons');
 disbut(bot);
 const psList = require('ps-list');
 const commands = require('./commands_dc/commands.js');
+const getReference = require('dc_ref_msg');
+getReference.extend(getReference.reference)
 const tools = require('./tools/tools.js');
 const fs = require('fs');
 const token = require('./token.js');
@@ -22,6 +24,8 @@ bot.on('clickButton', (button) => {
 })
 
 bot.on('ready', () => {
+    bot.user.setStatus('online') 
+    bot.user.setActivity("Tic Tac Toe")
     console.log(`I'm driving and I'm speeding.`);
 })
 
@@ -33,7 +37,7 @@ bot.on('message',async msg => {
         msg.prefix = prefix;
         msg.Player1 = msg.member;
         msg.Player2;
-        
+        console.log(msg);
 
         const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
         if(data[msg.channel.guild.id])
@@ -56,7 +60,7 @@ bot.on('message',async msg => {
                         .setColor(msg.color)
                         .setFooter(oldMsg.guild.name, oldMsg.guild.iconURL());
                         
-                        if(!oldMsg.referenceIsNull(oldMsg.referenced_message)){
+                        if(!oldMsg.referenceIsNull()){
                             if(oldMsg.referenced_message.embeds.length === 0)
                             {
                                 globalEmbed.addFields({
@@ -98,8 +102,10 @@ bot.on('message',async msg => {
                             else if(oldMsg.attachments.toJSON().length > 0)
                             {
                                 oldMsg.attachments.forEach((e)=> {
+                                    
                                     globalEmbed.setImage(e.url.toString())
                                 })
+                                globalEmbed.addField(`${oldMsg.author.username}`, `sent ${oldMsg.attachments.length} images.`)
                             }
                             if(oldMsg.content.startsWith('rg!imBored'))
                         {   
@@ -141,27 +147,6 @@ bot.on('message',async msg => {
         }
         //Admin
         
-        /*else if(msg.content.startsWith(`${prefix}setRPlayChannel`))
-        {
-            const Channel = msg.mentions.channels.first()
-            if(Channel !== undefined)
-            {
-                commands.module.Admin.setRolePlayChannel(msg, discord)
-                channelForRolePlay = msg.channelForRolePlay
-            }
-            else if(Channel === undefined)
-            {
-                const embed = new discord.MessageEmbed()
-                .setColor(msg.color)
-                .setTitle(`roleing in the Game`)
-                .setAuthor(msg.author.username)
-                .addFields({name: "> `Error!`", value: `You didnt Chose an Channel.`})
-                .setFooter(msg.guild.name, msg.guild.iconURL());
-                msg.channel.send(embed);
-            }
-            return;
-        }
-        */
         else if(msg.content.startsWith(`${prefix}setGlobal`))
         {
                 let data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});

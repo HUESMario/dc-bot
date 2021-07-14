@@ -4,6 +4,7 @@
   "description": "Bot for Games/Management",
   "main": "roleing in the Game.js",
   "dependencies": {
+    "dc_ref_msg": "^1.0.3",
     "discord-buttons": "^3.2.1",
     "discord-tictactoe": "^2.1.1",
     "discord.js": "^12.5.3",
