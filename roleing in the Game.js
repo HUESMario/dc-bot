@@ -36,6 +36,7 @@ bot.on('message',async msg => {
     msg.Player1 = msg.member;
     msg.Player2;
 
+    psList().then(processes =>{
     const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
     if(data[msg.channel.guild.id])
     {
@@ -229,6 +230,7 @@ bot.on('message',async msg => {
 
         msg.channel.send({embed: embed, component: upper_left})
         }
+    });
 });
 
 bot.login(token.module.token);
