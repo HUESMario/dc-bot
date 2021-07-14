@@ -54,9 +54,9 @@ bot.on('message',async msg => {
                     const globalEmbed = new discord.MessageEmbed()
                     .setThumbnail(bot.user.avatarURL())
                     .setAuthor(oldMsg.author.username, oldMsg.author.avatarURL())
-                    .setColor(msg.color)
+                    .setColor(oldMsg.color)
                     .setFooter(oldMsg.guild.name, oldMsg.guild.iconURL());
-                    if(message.reference)
+                    if(oldMsg.reference)
                     {
                     const referenceMSG = await msg.channel.messages.fetch(msg.reference.messageID);
                         if(referenceMSG.embeds.length === 0)
