@@ -84,7 +84,7 @@ class queueItem
     msg = {}
 }
 
-exports.module = {
+module.exports = {
     queueList: queueList,
     queueItem: queueItem
 };

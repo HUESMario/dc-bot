@@ -58,6 +58,6 @@ const deposit = (msg, discord) => {
         return;
     }
 }
-exports.module = {
+module.exports = {
     deposit: deposit
 }

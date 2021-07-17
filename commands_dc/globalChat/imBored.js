@@ -1,6 +1,6 @@
 const superagent = require('superagent');
 
-const getHappy = () => {
+const imBored = () => {
     return new Promise(function(resolve, reject){
     superagent.get('www.boredapi.com/api/activity').then((object)=>{
             resolve(JSON.parse(object.text));
@@ -8,6 +8,6 @@ const getHappy = () => {
     })
 }
 
-exports.module = {
-    getHappy: getHappy
+module.exports = {
+    imBored: imBored
 }

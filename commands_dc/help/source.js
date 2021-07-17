@@ -12,11 +12,9 @@ const source = (msg, discord) => {
     .setURL('https://github.com/HUESMario/dc-bot')
     .setLabel('Link to my Source Code!')
     .setDisabled(false);
-    console.log(msg.button);
-    console.log(msg.embed);
 
     msg.channel.send({embed: msg.embed, component: msg.button});
 }
-exports.module = {
+module.exports = {
     run: source
 }

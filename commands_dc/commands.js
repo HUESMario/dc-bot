@@ -5,26 +5,28 @@ const source = require('./help/source.js')
 //Games
 const deposit = require('./_Game/deposit.js');
 const TTT = require('./_Game/TTT.js');
-//Different
+//rg Global
 const getHappy = require('./lol.js');
+const global = require('./globalChat/globalChat.js');
 
-exports.module = {
+module.exports = {
     help: { 
-        help: help.module.run,
-        source: source.module.run
+        help: help.run,
+        source: source.run
     },
     Admin: {
     },
     Game: {
         TTT: {
-            run: TTT.module.TTT,
-            handleClick: TTT.module.handleClick
+            run: TTT.TTT,
+            handleClick: TTT.handleClick
         },
-        deposit: deposit.module.deposit
+        deposit: deposit.deposit
     },
-    Different:
+    global:
     {
-        getHappy: getHappy.module.getHappy
+        setGlobal: global.setGlobal,
+        globalChat: global.global
     }
     
 }

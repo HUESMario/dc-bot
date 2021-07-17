@@ -326,8 +326,7 @@ const changeField = (button) => {
     fields[getIndexes[0]][getIndexes[1]].character = playerChars[activePlayer][0]; 
     fields[getIndexes[0]][getIndexes[1]].style = playerChars[activePlayer][1]; 
 }
-
-exports.module = {
+module.exports = {
     TTT: TTT,
     handleClick: handleTTT
 }
