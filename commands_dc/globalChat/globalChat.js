@@ -3,7 +3,7 @@ const delGlobal = require('./delGlobal.js');
 const sendGif = require('./gifQueue.js');
 const imBored = require('./imBored.js');
 
-const global = async (discord, msg, bot, gifList) => {
+const global = async (discord, msg, bot, gifList, data) => {
     if(msg.author.bot)
     {
         msg.delete();

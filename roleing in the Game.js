@@ -40,7 +40,7 @@ bot.on('message',async msg => {
     const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
     if(data[msg.channel.guild.id])
     {
-        await commands.global.globalChat(discord, msg, bot);
+        await commands.global.globalChat(discord, msg, bot, gifList, data);
     }
     
     //Help
