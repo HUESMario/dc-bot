@@ -4,8 +4,8 @@ const setGlobal = (bot, discord, msg) => {
     data = JSON.parse(data);
     const channel = msg.mentions.channels.first();
     setGlobal = channel;
-    oldChannels[msg.guild.id] = {}
-    oldChannels[msg.guild.id].globalChannel = setGlobal;
+    oldChannels[msg.guild.id + msg.channel.id] = {}
+    oldChannels[msg.guild.id + msg.channel.id].globalChannel = setGlobal;
     fs.writeFileSync('./serversForGlobalChat.json', `${JSON.stringify(oldChannels)}`, (err) => {
         if(err) console.log(err);
     })

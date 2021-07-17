@@ -13,8 +13,6 @@ const token = require('./token.js');
 const queryString = require('querystring');
 const gifQueue = require('./commands_dc/globalChat/gifQueue.js');
 const gifList = new gifQueue.queueList();
-
-
 let prefix = 'rg!';
 let channelForRolePlay;
 
@@ -38,7 +36,7 @@ bot.on('message',async msg => {
 
     //rg global
     const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
-    if(data[msg.channel.guild.id])
+    if(data[msg.guild.id + msg.channel.id])
     {
         await commands.global.globalChat(discord, msg, bot, gifList, data);
     }

@@ -1,10 +1,12 @@
+const fs = require('fs');
+
 const delGlobal = (msg, discord, bot) => {
     let data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
     const oldChannels = JSON.parse(data);
     data = JSON.parse(data);
     const channel = msg.mentions.channels.first();
     setGlobal = channel;
-    delete oldChannels[msg.guild.id];
+    delete oldChannels[msg.guild.id + msg.channel.id];
     fs.writeFileSync('./serversForGlobalChat.json', `${JSON.stringify(oldChannels)}`, (err) => {
         if(err) console.log(err);
     })

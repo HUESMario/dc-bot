@@ -4,13 +4,13 @@ const sendGif = require('./gifQueue.js');
 const imBored = require('./imBored.js');
 
 const global = async (discord, msg, bot, gifList, data) => {
-    if(msg.author.bot)
+    if(msg.author.bot && msg.author.id !== '842053072666099733')
     {
         msg.delete();
         return;
     }
-    const setGlobal = data[msg.channel.guild.id].globalChannel
-    if(msg.channel.id === setGlobal.id && !msg.author.bot)
+    const setGlobal = data[msg.guild.id + msg.channel.id].globalChannel
+    if(msg.channel.id === setGlobal.id)
     {
         const oldMsg = msg;
         msg.delete();
