@@ -1,6 +1,6 @@
 const setGlobal = require('./setGlobal.js');
 const delGlobal = require('./delGlobal.js');
-const sendGif = require('./gifQueue.js');
+const sendGif = require('./sendGif.js');
 const imBored = require('./imBored.js');
 
 const global = async (discord, msg, bot, gifList, data) => {
@@ -10,7 +10,7 @@ const global = async (discord, msg, bot, gifList, data) => {
         return;
     }
     const setGlobal = data[msg.guild.id + msg.channel.id].globalChannel
-    if(msg.channel.id === setGlobal.id)
+    if(msg.channel.id === setGlobal.id && !msg.author.bot)
     {
         const oldMsg = msg;
         msg.delete();
@@ -48,6 +48,7 @@ const global = async (discord, msg, bot, gifList, data) => {
                 if(oldMsg.embeds.length > 0)
                 {
                     sendGif.sendGif(msg, gifList, bot)
+                    return;
                 }
                 else if(oldMsg.attachments.toJSON().length > 0)
                 {
@@ -55,7 +56,7 @@ const global = async (discord, msg, bot, gifList, data) => {
                         
                         globalEmbed.setImage(e.url.toString())
                     })
-                    globalEmbed.addField(`${oldMsg.author.username}`, `sent ${oldMsg.attachments.length} images.`)
+                    globalEmbed.addField(`${oldMsg.author.username}`, `sent ${oldMsg.attachments.toJSON().length} image${oldMsg.attachments.toJSON().length === 1 ? "" : "s"}.`)
                 }
                 if(oldMsg.content === 'rg!imBored')
             {   
