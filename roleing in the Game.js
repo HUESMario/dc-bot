@@ -11,11 +11,12 @@ const tools = require('./tools/tools.js');
 const fs = require('fs');
 const token = require('./token.js');
 const queryString = require('querystring');
-const gifQueue = require('./gifQueue.js');
-let queueList = new gifQueue.queueList();
+const gifQueue = require('./commands_dc/globalChat/gifQueue.js');
+const gifList = new gifQueue.queueList();
+
+
 let prefix = 'rg!';
 let channelForRolePlay;
-let setGlobal;
 
 bot.on('clickButton', (button) => {
     button.button = disbut;
@@ -35,16 +36,13 @@ bot.on('message',async msg => {
     msg.Player1 = msg.member;
     msg.Player2;
 
-    
+    //rg global
     const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
     if(data[msg.channel.guild.id])
     {
-        commands.global.globalChat(discord, msg);
+        await commands.global.globalChat(discord, msg, bot);
     }
-    if(msg.mentions.users.first())
-    {
-        msg.Player2 = msg.mentions.members.first()
-    }
+    
     //Help
     if(msg.content == `${prefix}help`)
     {
@@ -60,31 +58,11 @@ bot.on('message',async msg => {
     
     else if(msg.content.startsWith(`${prefix}setGlobal`))
     {
-        
+        commands.global.setGlobal(bot, discord, msg);
     }
     else if(msg.content === `${prefix}delGlobal`)
     {   
-        let data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
-            const oldChannels = JSON.parse(data);
-            data = JSON.parse(data);
-            const channel = msg.mentions.channels.first();
-            setGlobal = channel;
-            delete oldChannels[msg.guild.id];
-            fs.writeFileSync('./serversForGlobalChat.json', `${JSON.stringify(oldChannels)}`, (err) => {
-                if(err) console.log(err);
-            })
-            const globalEmbed = new discord.MessageEmbed()
-                    .setThumbnail(bot.user.avatarURL)
-                    .setAuthor(msg.author.username, msg.author.avatarURL())
-                    .setColor([195, 96, 56])
-                    .setFooter(msg.guild.name, msg.guild.iconURL())
-                    .addField(`> ${msg.guild.name} left Chat`, `${msg.guild.name} just left RG Global`);
-                    const registeredGuilds = Object.keys(data);
-
-                    for(let i = 0; i < registeredGuilds.length; ++i)
-                    {
-                        bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
-                    }
+        commands.global.delGlobal(msg, discord, bot);
     }
     //Games
 
@@ -96,6 +74,10 @@ bot.on('message',async msg => {
     }
     else if(msg.content.startsWith(`${prefix}TTT`))
     {
+        if(msg.mentions.users.first())
+        {
+            msg.Player2 = msg.mentions.members.first()
+        }
         if(msg.mentions.users.first() === undefined)
         {
             const embed = new discord.MessageEmbed()
@@ -107,19 +89,5 @@ bot.on('message',async msg => {
         msg.button = disbut;
         commands.Game.TTT.run(msg, discord);
     }
-    else if(msg.content.startsWith(`${prefix}testEmbed`))
-    {
-        const embed = new discord.MessageEmbed()
-        .addField('greetings');
-
-        const upper_left = new disbut.MessageButton()
-        .setID('0:0')
-        .setStyle(4)
-        .setLabel('Test Button')
-        .setDisabled(true);
-
-        msg.channel.send({embed: embed, component: upper_left})
-        }
-    });
-
+})
 bot.login(token.token);

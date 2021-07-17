@@ -6,7 +6,6 @@ const source = require('./help/source.js')
 const deposit = require('./_Game/deposit.js');
 const TTT = require('./_Game/TTT.js');
 //rg Global
-const getHappy = require('./lol.js');
 const global = require('./globalChat/globalChat.js');
 
 module.exports = {
@@ -25,6 +24,7 @@ module.exports = {
     },
     global:
     {
+        delGlobal: global.delGlobal,
         setGlobal: global.setGlobal,
         globalChat: global.global
     }

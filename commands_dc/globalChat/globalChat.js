@@ -1,15 +1,15 @@
-const psList = require('ps-list');
 const setGlobal = require('./setGlobal.js');
+const delGlobal = require('./delGlobal.js');
 const sendGif = require('./gifQueue.js');
+const imBored = require('./imBored.js');
 
-const global = (discord, msg, bot) => {
-    psList().then(async processes =>{
-    if(msg.author.bot && msg.author.id !== '842053072666099733')
-        {
-            msg.delete();
-            return;
-        }
-    setGlobal = data[msg.channel.guild.id].globalChannel
+const global = async (discord, msg, bot, gifList) => {
+    if(msg.author.bot)
+    {
+        msg.delete();
+        return;
+    }
+    const setGlobal = data[msg.channel.guild.id].globalChannel
     if(msg.channel.id === setGlobal.id && !msg.author.bot)
     {
         const oldMsg = msg;
@@ -32,9 +32,8 @@ const global = (discord, msg, bot) => {
                         image: {
                             url: referenceMSG.author.icon_url
                         }
-                        })
-                        
-                    }
+                    })
+                }
                 else if(referenceMSG.embeds.length === 1)
                 {
                     globalEmbed.addFields({
@@ -48,7 +47,7 @@ const global = (discord, msg, bot) => {
             }
                 if(oldMsg.embeds.length > 0)
                 {
-                    sendGif.sendGif(msg)
+                    sendGif.sendGif(msg, gifList, bot)
                 }
                 else if(oldMsg.attachments.toJSON().length > 0)
                 {
@@ -58,13 +57,12 @@ const global = (discord, msg, bot) => {
                     })
                     globalEmbed.addField(`${oldMsg.author.username}`, `sent ${oldMsg.attachments.length} images.`)
                 }
-                if(oldMsg.content.startsWith('rg!imBored'))
+                if(oldMsg.content === 'rg!imBored')
             {   
-                const text = commands.module.Different.getHappy();
-                console.log(text);
+                const text = imBored.imBored();
                 text.then(value => {
                     globalEmbed.setAuthor(bot.user.username, bot.user.avatarURL())
-                    globalEmbed.addField('Bored? Not anymore!', `activity: ${value.activity} \n link: ${value.link} \n Your need of Friends: ${value.participants - 1} \n Type of activity: ${value.type}`);
+                    globalEmbed.addField('Bored? Not anymore!', `activity: ${value.activity} \n link: ${value.link} \n Your need of Friends: ${value.participants > 0 ? value.participants - 1 : 0} \n Type of activity: ${value.type}`);
                     bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
                 }).catch(err=>{console.log(err)});
                 
@@ -79,9 +77,9 @@ const global = (discord, msg, bot) => {
                 }
             }
         }
-    })
 }
 module.exports = {
     setGlobal: setGlobal.setGlobal,
+    delGlobal: delGlobal.delGlobal,
     global: global
 }

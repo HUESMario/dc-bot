@@ -1,9 +1,9 @@
 const gifQueue = require('./gifQueue.js');
-const sendGif = (oldMsg) => {
+const sendGif = (oldMsg, gifList, bot) => {
     const queueItem = new gifQueue.queueItem();
     oldMsg.bot = bot;
     queueItem.addGif(oldMsg.embeds[0], oldMsg.author, oldMsg, bot.channels);
-    queueList.addGif(queueItem);
+    gifList.addGif(queueItem);
 
     if(Object.values(processes).indexOf('phantomjs.exe') <= -1){
         if(queueList.returnLength() > 0 && !msg.author.bot)
