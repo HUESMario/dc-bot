@@ -5,6 +5,8 @@ const bot = new discord.Client();
 const disbut = require('discord-buttons');
 disbut(bot);
 const commands = require('./commands_dc/commands.js');
+const cfg = require('./config.json');
+const tw = require('node-tweet-stream')(cfg);
 const getReference = require('dc_ref_msg');
 getReference.extend(getReference.reference)
 const tools = require('./tools/tools.js');
@@ -14,7 +16,6 @@ const queryString = require('querystring');
 const gifQueue = require('./commands_dc/globalChat/gifQueue.js');
 const gifList = new gifQueue.queueList();
 let prefix = 'rg!';
-let channelForRolePlay;
 
 bot.on('clickButton', (button) => {
     button.button = disbut;
@@ -64,12 +65,7 @@ bot.on('message',async msg => {
     }
     //Games
 
-    else if(msg.content.startsWith(`${prefix}deposit`))
-    {
-        msg.channelForRolePlay = channelForRolePlay;
-        msg.tool = {checkForChannel: tools.checkForChannel};
-        commands.Game.deposit(msg, discord);
-    }
+    
     else if(msg.content.startsWith(`${prefix}TTT`))
     {
         if(msg.mentions.users.first())
@@ -87,5 +83,65 @@ bot.on('message',async msg => {
         msg.button = disbut;
         commands.Game.TTT.run(msg, discord);
     }
+    else if(msg.content.startsWith(`${prefix}delTTT`))
+    {
+        if(msg.mentions.users.first())
+        {
+            const Opponnent = msg.mentions.users.first();
+            const connectedIDs = tools.module.connectIDs(msg.author.id, Opponnent.id);
+            const data = JSON.parse(fs.readFileSync('commands_dc/_Game/_data/games.json', {encoding: 'utf-8'}));
+            if(!data[connectedIDs])
+            {
+                const embed = new discord.MessageEmbed()
+                .addFields({name:`Error!`, value: `> You didn't fought against him.`});
+            
+            msg.channel.send(embed);
+            return;
+            }
+            else {
+                const newGames = data;
+                delete newGames[connectedIDs];
+                fs.writeFileSync('commands_dc/_Game/_data/games.json', JSON.stringify(newGames), (err) => {
+                    const embed = new discord.MessageEmbed()
+                    .addFields({name:`Uhmm Upps :-)`, value: `> Seems like I made a mistake this Time, would you like to try again?`});
+            
+                    msg.channel.send(embed);
+                    return;
+                })
+                const embed = new discord.MessageEmbed()
+                .addFields({name:`Success :)`, value: `> Your Game has been deleted.`});
+            
+                msg.channel.send(embed);
+                return;
+            }
+        }   
+        if(msg.mentions.users.first() === undefined)
+        {
+            const embed = new discord.MessageEmbed()
+            .addFields({name:`Error!`, value: `> You need to Mention your Opponnent. So I can delete your Game^^`});
+            
+            msg.channel.send(embed);
+            return;
+        }
+    }
+    /*
+    //infos
+    else if(msg.content.startsWith(`${prefix}getTweets`))
+    {
+        tw.language('en');
+        tw.track(msg.content.split(' ')[1] || 'Game');
+        tw.on('tweet', (tweet) => {
+            const embed = new discord.MessageEmbed()
+            .setAuthor(tweet.user.name, tweet.user.profile_background_image_url)
+            .addField('Tweet', tweet.text);
+
+            msg.channel.send(embed);
+        });
+    }
+    */
 })
+
+setInterval(()=>{
+    bot.user.setActivity(`TTT on ${bot.guilds.cache.size} Servers`)
+}, 10000);
 bot.login(token.token);

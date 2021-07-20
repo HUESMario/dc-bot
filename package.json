@@ -4,14 +4,16 @@
   "description": "Bot for Games/Management",
   "main": "roleing in the Game.js",
   "dependencies": {
-    "dc_ref_msg": "^1.0.3",
+    "dc_ref_msg": "^1.0.4",
     "discord-buttons": "^3.2.1",
     "discord-tictactoe": "^2.1.1",
     "discord.js": "^12.5.3",
     "get-image-urls": "^1.0.5",
-    "mongodb": "^3.6.9",
+    "mongodb": "^3.6.10",
+    "node-tweet-stream": "^2.1.0",
     "omdb": "^0.8.0",
     "ps-list": "^7.2.0",
+    "socket.io": "^4.1.3",
     "superagent": "^6.1.0"
   },
   "devDependencies": {},
