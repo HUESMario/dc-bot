@@ -3,10 +3,11 @@ const help = require('./help/help.js');
 const source = require('./help/source.js')
 //Admin
 //Games
-const deposit = require('./_Game/deposit.js');
 const TTT = require('./_Game/TTT.js');
+const threeWon = require('./_Game/4 won.js');
 //rg Global
 const global = require('./globalChat/globalChat.js');
+const { handleClick } = require('./_Game/4 won.js');
 
 module.exports = {
     help: { 
@@ -20,7 +21,11 @@ module.exports = {
             run: TTT.TTT,
             handleClick: TTT.handleClick
         },
-        deposit: deposit.deposit
+        threeWon:
+        {
+            run: threeWon.threeWon,
+            handleClick: threeWon.handleClick
+        }
     },
     global:
     {
