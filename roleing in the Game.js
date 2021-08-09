@@ -38,7 +38,7 @@ bot.on('message',async msg => {
 
     if(msg.mentions.users.first())
     {
-        msg.Player2 = msg.mentions.users.first();
+        msg.Player2 = msg.mentions.members.first();
     }
 
     //rg global

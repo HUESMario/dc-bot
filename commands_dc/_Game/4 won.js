@@ -19,7 +19,6 @@ let fields = [
 const threeWonGame = (msg) => {
     Player1 = msg.Player1;
     Player2 = msg.Player2;
-    console.log(Player2);
     computePlayfield();
     getPlayfield(msg)
 }
@@ -66,7 +65,7 @@ const saveGameData = (connectedID, data) => {
 
 const getPlayfield = (msg) => {
     const playerEmbed = new discord.MessageEmbed();
-    playerEmbed.addField('Player IDs:', `${[Player1.userID, Player2.user.id].join('&')}`);
+    playerEmbed.addField('Player IDs:', `${[Player1.userID, Player2.userID].join('&')}`);
     
     if(activePlayer === 0)
     {
