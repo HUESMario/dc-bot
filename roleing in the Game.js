@@ -95,7 +95,7 @@ bot.on('message',async msg => {
         {
             const Opponnent = msg.mentions.users.first();
             const connectedIDs = tools.module.connectIDs(msg.author.id, Opponnent.id);
-            const data = JSON.parse(fs.readFileSync('commands_dc/_Game/_data/games.json', {encoding: 'utf-8'}));
+            const data = JSON.parse(fs.readFileSync('commands_dc/_Game/_data/TTT.json', {encoding: 'utf-8'}));
             if(!data[connectedIDs])
             {
                 const embed = new discord.MessageEmbed()
@@ -107,7 +107,7 @@ bot.on('message',async msg => {
             else {
                 const newGames = data;
                 delete newGames[connectedIDs];
-                fs.writeFileSync('commands_dc/_Game/_data/games.json', JSON.stringify(newGames), (err) => {
+                fs.writeFileSync('commands_dc/_Game/_data/TTT.json', JSON.stringify(newGames), (err) => {
                     const embed = new discord.MessageEmbed()
                     .addFields({name:`Uhmm Upps :-)`, value: `> Seems like I made a mistake this Time, would you like to try again?`});
             
@@ -136,6 +136,7 @@ bot.on('message',async msg => {
         if(msg.mentions.users.first())
         {
             msg.Player2 = msg.mentions.members.first()
+            msg.button = disbut;
             commands.Game.threeWon.run(msg);
         }
     }
