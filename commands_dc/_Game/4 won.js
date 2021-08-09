@@ -19,6 +19,7 @@ let fields = [
 const threeWonGame = (msg) => {
     Player1 = msg.Player1;
     Player2 = msg.Player2;
+    console.log(msg.Player2);
     computePlayfield();
     getPlayfield(msg)
 }
