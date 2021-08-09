@@ -65,7 +65,7 @@ const saveGameData = (connectedID, data) => {
 
 const getPlayfield = (msg) => {
     const playerEmbed = new discord.MessageEmbed();
-    playerEmbed.addField('Player IDs:', `${[Player1.userID, Player2.userID].join('&')}`);
+    playerEmbed.addField('Player IDs:', `${[Player1.userID, Player2.user.id].join('&')}`);
     
     if(activePlayer === 0)
     {

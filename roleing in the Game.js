@@ -27,7 +27,6 @@ bot.on('ready', () => {
     bot.user.setStatus('online') 
     bot.user.setActivity(`TTT on ${bot.guilds.cache.size} Servers`)
     console.log(`I'm driving and I'm speeding.`);
-    console.log(bot.guilds.cache.array());
 })
 
 bot.on('message',async msg => {
