@@ -133,7 +133,11 @@ bot.on('message',async msg => {
 
     else if(msg.content.startsWith('rg!3won'))
     {
-        commands.Game.threeWon.run(msg);
+        if(msg.mentions.users.first())
+        {
+            msg.Player2 = msg.mentions.members.first()
+            commands.Game.threeWon.run(msg);
+        }
     }
 
     /*
