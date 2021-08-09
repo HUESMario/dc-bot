@@ -36,6 +36,11 @@ bot.on('message',async msg => {
     msg.Player1 = msg.member;
     msg.Player2;
 
+    if(msg.mentions.users.first())
+    {
+        msg.Player2 = msg.mentions.users.first();
+    }
+
     //rg global
     const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
     if(data[msg.guild.id + msg.channel.id])
