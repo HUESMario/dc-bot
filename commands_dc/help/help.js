@@ -8,7 +8,7 @@ const help = (msg, discord) => {
         ${msg.seperator}
         You can Delete the Global Chat with **rg!delGlobal**`},
         {name: "> `Game`", value: `You can Play **Tic Tac Toe** with someone else: **rg!TTT <@opponent>**.`},
-        {name: "> `new Games:`", value: "You can Play **3 Won** with **rg!3Won <@opponent>** ( wanted to make 4 wins but Technical Limitations kinda restricted me, sadge )"},
+        //{name: "> `new Games:`", value: "You can Play **3 Won** with **rg!3Won <@opponent>** ( wanted to make 4 wins but Technical Limitations kinda restricted me, sadge )"},
         {name: "> `rg Global`", value: `You can get something to do by typing in the rg Chat Channel: **rg!imBored**`},
         {name: "> `different`", value: `You can get my Code from **rg!source**
         ${msg.seperator}
