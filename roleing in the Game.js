@@ -18,6 +18,7 @@ const gifList = new gifQueue.queueList();
 let prefix = 'rg!';
 
 bot.on('clickButton', (button) => {
+    console.log(button.message.components);
     button.button = disbut;
     commands.Game.TTT.handleClick(button);
 })
@@ -124,6 +125,12 @@ bot.on('message',async msg => {
             return;
         }
     }
+
+    else if(msg.content.startsWith('rg!3won'))
+    {
+        commands.Game.threeWon.run(msg);
+    }
+
     /*
     //infos
     else if(msg.content.startsWith(`${prefix}getTweets`))
