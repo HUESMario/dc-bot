@@ -4,16 +4,10 @@ const source = (msg, discord) => {
     .setColor(msg.color)
     .setTitle(`roleing in the Game`)
     .setAuthor(msg.author.username)
-    .addFields({name: "> `Source`", value: `Press the Button to go to my Github.^^`})  
+    .addFields({name: "> `Source`", value: `DM the owner ^^`})  
     .setFooter(msg.guild.name, msg.guild.iconURL());
 
-    msg.button
-    .setStyle('url')
-    .setURL('https://github.com/HUESMario/dc-bot')
-    .setLabel('Link to my Source Code!')
-    .setDisabled(false);
-
-    msg.channel.send({embed: msg.embed, component: msg.button});
+    msg.channel.send({embed: msg.embed});
 }
 module.exports = {
     run: source
