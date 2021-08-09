@@ -12,20 +12,22 @@ let fields = [
     [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}], 
     [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}], 
     [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}],
-    [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 3, Disabled: true}], 
-    [{character: " ", style: 2, Disabled: true}, {character: " ", style: 3, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 3, Disabled: true}]
+    [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}], 
+    [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}]
 ]
 
-const threeWonGame = (msg) => {
+const threeWonGame = (msg) => 
+{
     Player1 = msg.Player1;
     Player2 = msg.Player2;
-    console.log(msg.Player2);
     computePlayfield();
     getPlayfield(msg)
 }
 
-const threeClick = (button) => {
-    
+const threeClick = async (button) => 
+{
+    const clickUser = button.clicker;
+
 }
 
 const computePlayfield = () => {
@@ -66,6 +68,7 @@ const saveGameData = (connectedID, data) => {
 
 const getPlayfield = (msg) => {
     const playerEmbed = new discord.MessageEmbed();
+    console.log(Player1);
     playerEmbed.addField('Player IDs:', `${[Player1.userID, Player2.userID].join('&')}`);
     
     if(activePlayer === 0)

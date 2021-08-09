@@ -18,9 +18,15 @@ const gifList = new gifQueue.queueList();
 let prefix = 'rg!';
 
 bot.on('clickButton', (button) => {
-    console.log(button.message.components);
     button.button = disbut;
-    commands.Game.TTT.handleClick(button);
+    if(button.message.components.length === 5)
+    {
+        commands.Game.threeWon.handleClick(button);
+    }
+    if(button.message.components.length === 3)
+    {
+        commands.Game.TTT.handleClick(button);
+    }
 })
 
 bot.on('ready', () => {
