@@ -47,30 +47,24 @@ const threeClick = async (button) =>
     button.message.button = button.button;
 
     //get if Correct User wants to Play.
-    idsOfPlayers[activePlayer] === clickUser.user.id;
-    fields[[ids[0]]][ids[1]].style = playerChars[activePlayer][1];
-    checkForWin(button.message);
-    if(won === 0)
+    if(idsOfPlayers[activePlayer] === clickUser.user.id)
     {
-        switchPlayer();
-        computePlayfield();
-        getPlayfield(button.message);
-        saveGameData(idsOfPlayersConnected, data);
-        button.message.delete();
-    }
-    else if(won !== 0)
-    {
-        if(won === 1)
+        fields[[ids[0]]][ids[1]].style = playerChars[activePlayer][1];
+        checkForWin(button.message);
+        if(won === 0)
         {
-            console.log("rild 1");
+            switchPlayer();
+            computePlayfield();
+            getPlayfield(button.message);
+            saveGameData(idsOfPlayersConnected, data);
+            button.message.delete();
         }
-        else if(won === 2)
+        else if(won !== 0)
         {
-            console.log("rild 2");
+            getPlayfield(button.message);
+            deleteGameData(idsOfPlayersConnected, data);
+            button.message.delete();
         }
-        getPlayfield(button.message);
-        deleteGameData(idsOfPlayersConnected, data);
-        button.message.delete();
     }
 }
 
