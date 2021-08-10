@@ -11,27 +11,33 @@ const getReference = require('dc_ref_msg');
 getReference.extend(getReference.reference)
 const tools = require('./tools/tools.js');
 const fs = require('fs');
-const token = require('./token.js');
+const token = require('./Token.js');
 const queryString = require('querystring');
 const gifQueue = require('./commands_dc/globalChat/gifQueue.js');
 const gifList = new gifQueue.queueList();
 let prefix = 'rg!';
 
 bot.on('clickButton', (button) => {
-    button.button = disbut;
-    if(button.message.components.length === 5)
-    {
-        commands.Game.threeWon.handleClick(button);
+    if(button.message.author.id === '842053072666099733' || button.message.author.id === '799388234877632558')
+    { 
+        button.button = disbut;
+        if(button.message.components.length === 5)
+        {
+            commands.Game.threeWon.handleClick(button);
+        }
+        if(button.message.components.length === 3)
+        {
+            commands.Game.TTT.handleClick(button);
+        }
     }
-    if(button.message.components.length === 3)
-    {
-        commands.Game.TTT.handleClick(button);
+    else {
+        console.log('Not my Button.');
     }
 })
 
 bot.on('ready', () => {
     bot.user.setStatus('online') 
-    bot.user.setActivity(`TTT on ${bot.guilds.cache.size} Servers`)
+    bot.user.setActivity(`TTT and 3 won`)
     console.log(`I'm driving and I'm speeding.`);
 })
 
@@ -46,9 +52,10 @@ bot.on('message',async msg => {
     {
         msg.Player2 = msg.mentions.members.first();
     }
+    
 
     //rg global
-    const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
+    const data = JSON.parse(fs.readFileSync('./globalChatServers.json', {encoding: 'utf-8'}));
     if(data[msg.guild.id + msg.channel.id])
     {
         await commands.global.globalChat(discord, msg, bot, gifList, data);
@@ -80,24 +87,9 @@ bot.on('message',async msg => {
     
     else if(msg.content.startsWith(`${prefix}TTT`))
     {
-        if(msg.mentions.users.first())
+        if(msg.content.split(' ')[1] === 'delete')
         {
-            msg.Player2 = msg.mentions.members.first()
-        }
-        if(msg.mentions.users.first() === undefined)
-        {
-            const embed = new discord.MessageEmbed()
-            .addFields({name:`Error!`, value: `> You need to Mention an Opponnent. ^^`});
-            
-            msg.channel.send(embed);
-            return;
-        }
-        msg.button = disbut;
-        commands.Game.TTT.run(msg, discord);
-    }
-    else if(msg.content.startsWith(`${prefix}delTTT`))
-    {
-        if(msg.mentions.users.first())
+            if(msg.mentions.users.first())
         {
             const Opponnent = msg.mentions.users.first();
             const connectedIDs = tools.module.connectIDs(msg.author.id, Opponnent.id);
@@ -135,16 +127,45 @@ bot.on('message',async msg => {
             msg.channel.send(embed);
             return;
         }
+        }
+        if(msg.mentions.users.first())
+        {
+            msg.Player2 = msg.mentions.members.first()
+        }
+        if(msg.mentions.users.first() === undefined)
+        {
+            const embed = new discord.MessageEmbed()
+            .addFields({name:`Error!`, value: `> You need to Mention an Opponnent. ^^`});
+            
+            msg.channel.send(embed);
+            return;
+        }
+        msg.button = disbut;
+        commands.Game.TTT.run(msg, discord);
+    }
+    else if(msg.content.startsWith(`${prefix}delTTT`))
+    {
+        
     }
 
-    else if(msg.content.startsWith('rg!3won'))
+    else if(msg.content.startsWith(`${prefix}3won`))
     {
+        console.log(msg.content.split(' '));
+        if(msg.content.split(' ')[1] === 'delete' && msg.mentions.users.first())
+        {
+            const connectedIDs = tools.module.connectIDs(msg.author.id,msg.mentions.users.first().id);
+            const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/3Won.json', ( err )=>{ console.log(err) }));
+            delete data[connectedIDs];
+            fs.writeFileSync('./commands_dc/_Game/_data/3Won.json', JSON.stringify(data), ( err )=>{ console.log(err) })
+            return;
+        }
         if(msg.mentions.users.first())
         {
             msg.Player2 = msg.mentions.members.first()
             msg.button = disbut;
             commands.Game.threeWon.run(msg);
         }
+        
     }
 
     /*
@@ -162,9 +183,59 @@ bot.on('message',async msg => {
         });
     }
     */
+   //owner Commands
+   
+   else if(msg.content === 'rg!list Status' && msg.author.id === '774752109064486932')
+   {
+       let message = "";
+       for(let i = 0; i < statusArr.length; ++i)
+       {
+           message += `${i + 1} |  ${statusArr[i]}\n`; 
+       }
+       msg.channel.send(message);
+       return;
+   }
+   else if(msg.content.startsWith(`${prefix}deleteStatus`))
+   {
+    if(typeof(Number(msg.content.split(' ')[1])))
+    {
+       const index = parseInt(msg.content.split(' ')[1]) - 1;
+       let newArr = [];
+       for(let i = 0; i < statusArr.length; ++i)
+       {
+            if(index !== i)
+            {
+                newArr.push(statusArr[i]);
+            }
+       }
+       statusArr = newArr;
+       return;
+    }
+   }
+   if((msg.channel.id === '874679283291947029' || msg.channel.id === '874690582621077584') && msg.author.id === '774752109064486932')
+    {
+        statusArr.push(msg.content);
+    }
 })
-
+let statusArr = [`TTT and 3 won`];
+let currentStatus = 0;
 setInterval(()=>{
-    bot.user.setActivity(`TTT on ${bot.guilds.cache.size} Servers`)
+    let length = statusArr.length;
+    bot.user.setActivity(statusArr[currentStatus]);
+    if(length === 1)
+    {
+        return;
+    }
+    else 
+    {
+        if(currentStatus === length - 1)
+        {
+            currentStatus = 0;
+        }
+        else 
+        {
+            ++currentStatus;
+        }
+    }
 }, 10000);
 bot.login(token.token);

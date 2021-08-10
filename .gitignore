@@ -1,16 +1,9 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-
 # Dependency directories
-node_modules/
-#jspm_packages/
+node_modules
 
-#game Data and unfinished Games
+# secret files:
+#Token.js
+globalChatServers.json
 
-commands_dc/_Game/_data/games.json
-commands_dc/_Game/TTT.js
-
-serversForGlobalChat.json
-token.js
+commands_dc/_Game/_data/ttt.json
+commands_dc/_Game/_data/3Won.json

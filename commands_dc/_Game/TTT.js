@@ -4,10 +4,10 @@ let activePlayer = 0;
 const playerChars = [['X', 1], ['O', 3]];
 const fs = require('fs');
 const tools = require('../../tools/tools.js');
-const discord = require('discord.js')
+const discord = require('discord.js');
+const { get } = require('https');
 let Player1;
 let Player2;
-let msgCopy;
 
 const solutions = [
     [["0:0"], ["0:1"], ["0:2"], 0], [["1:0"],["1:1"],["1:2"], 1], [["2:0"], ["2:1"], ["2:2"], 2], 
@@ -60,6 +60,7 @@ const TTT = async(msg, discord) => {
             "activePlayer": activePlayer
         }
         getPlayfield(msg);
+        saveGameData(joinedIDs, data);
     }
     else if(data[joinedIDs] !== undefined)
     {
@@ -67,12 +68,13 @@ const TTT = async(msg, discord) => {
         .setColor(msg.color)
         .setTitle(`roleing in the Game - Tic Tac Toe`)
         .setAuthor(msg.author.username)
-        .addFields({name: "> TTT", value: `You two already have a Game!`})
+        .addFields({name: "> TTT", value: `You two already have a Game, I'll load it for you.`})
         .setFooter(msg.guild.name, msg.guild.iconURL())
 
         msg.channel.send(embed);
+        getGameData(joinedIDs, data);
+        getPlayfield(msg);        
     }
-    saveGameData(joinedIDs, data);
 
 }
 
@@ -102,7 +104,7 @@ const handleTTT = async (handleData) => {
         return false;
     }
     const connectedID = tools.module.extractID(handleData.message.embeds[0].fields[0]);
-    const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/TTT.json', 'utf-8'))
+    const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/ttt.json', 'utf-8'))
     getGameData(connectedID, data);
     if(isCorrectPlayer())
     {
@@ -160,61 +162,12 @@ const gameEnd = () => {
 }
 
 const saveGameData = (connectedID, data) => {
-
-    var Connection = require('tedious').Connection;  
-    var config = {  
-        server: 'sql11.freemysqlhosting.net',
-        authentication: {
-            type: 'default',
-            options: {
-                userName: 'sql11427639',
-                password: '1rtbm7b8dt'
-            }
-        }
-    };  
-    const connection = new Connection(config);  
-    connection.on('connect', function(err) {
-        console.log("Connected");    
-        executeStatement1();
-    });
-    
-    connection.connect();
-
-    const Request = require('tedious').Request  
-    const TYPES = require('tedious').TYPES;  
-  
-    function executeStatement1() {  
-        const request = new Request("INSERT TTT (Player1, Player2, activePlayer, fields);", function(err) {  
-         if (err) {  
-            console.log(err);}  
-        });  
-        request.addParameter('Player1', TYPES.NVarChar, JSON.stringify(Player1));
-        request.addParameter('Player2', TYPES.NVarChar, JSON.stringify(Player2));
-        request.addParameter('activePlayer', TYPES.Int, activePlayer);
-        request.addParameter('fields', TYPES.NVarChar, JSON.stringify(fields));
-        request.on('row', function(columns) {  
-            columns.forEach(function(column) {  
-              if (column.value === null) {  
-                console.log('NULL');  
-              } else {  
-                console.log(column);  
-              }  
-            });  
-        });
-
-        // Close the connection after the final event emitted by the request, after the callback passes
-        request.on("requestCompleted", function (rowCount, more) {
-            connection.close();
-        });
-        connection.execSql(request);
-    }
-
     data[connectedID] = {};
     data[connectedID]["fields"] = fields;
     data[connectedID]["activePlayer"] = activePlayer;
     data[connectedID]["Player1"] = Player1;
     data[connectedID]["Player2"] = Player2;
-    fs.writeFileSync('./commands_dc/_Game/_data/TTT.json', JSON.stringify(data), (err) => {
+    fs.writeFileSync('./commands_dc/_Game/_data/ttt.json', JSON.stringify(data), (err) => {
         if(err) throw err;
     })
 }
@@ -228,7 +181,7 @@ const getGameData = (connectedIDs, getData) => {
 
 const deleteGameData = (connectedID, getData) => {
     delete getData[connectedID];
-    fs.writeFileSync('./commands_dc/_Game/_data/TTT.json', JSON.stringify(getData), (err) => {
+    fs.writeFileSync('./commands_dc/_Game/_data/ttt.json', JSON.stringify(getData), (err) => {
         if(err) throw err;
     });
 }
@@ -274,8 +227,8 @@ const getPlayfield = (msg, won = false) => {
         {
             playerEmbed.addField('Player who won: ', Player2.displayName)
         }
-        playerEmbed.addField('Game:', `Tic Tac Toe`);
     }
+    playerEmbed.addField('Game:', `Tic Tac Toe`);
     const upper_left = new msg.button.MessageButton()
     .setID('0:0')
     .setStyle(fields[0][0].style)

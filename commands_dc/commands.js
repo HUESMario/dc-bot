@@ -4,10 +4,10 @@ const source = require('./help/source.js')
 //Admin
 //Games
 const TTT = require('./_Game/TTT.js');
-const threeWon = require('./_Game/4 won.js');
+const threeWon = require('./_Game/3 won.js');
 //rg Global
 const global = require('./globalChat/globalChat.js');
-const { handleClick } = require('./_Game/4 won.js');
+const { handleClick } = require('./_Game/3 won.js');
 
 module.exports = {
     help: { 
