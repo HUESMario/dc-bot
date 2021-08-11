@@ -46,7 +46,6 @@ const threeClick = async (button) =>
     const ids = tools.module.extractPos(button.id);
     button.message.button = button.button;
 
-    //get if Correct User wants to Play.
     if(idsOfPlayers[activePlayer] === clickUser.user.id)
     {
         fields[[ids[0]]][ids[1]].style = playerChars[activePlayer][1];
@@ -65,6 +64,10 @@ const threeClick = async (button) =>
             deleteGameData(idsOfPlayersConnected, data);
             button.message.delete();
         }
+    }
+    else 
+    {
+        button.message.channel.send("It's either not your turn or you're not participating.");
     }
 }
 

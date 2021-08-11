@@ -84,7 +84,6 @@ bot.on('message',async msg => {
     }
     //Games
 
-    
     else if(msg.content.startsWith(`${prefix}TTT`))
     {
         if(msg.content.split(' ')[1] === 'delete')
@@ -143,21 +142,41 @@ bot.on('message',async msg => {
         msg.button = disbut;
         commands.Game.TTT.run(msg, discord);
     }
-    else if(msg.content.startsWith(`${prefix}delTTT`))
-    {
-        
-    }
 
     else if(msg.content.startsWith(`${prefix}3won`))
     {
-        console.log(msg.content.split(' '));
         if(msg.content.split(' ')[1] === 'delete' && msg.mentions.users.first())
         {
-            const connectedIDs = tools.module.connectIDs(msg.author.id,msg.mentions.users.first().id);
-            const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/3Won.json', ( err )=>{ console.log(err) }));
-            delete data[connectedIDs];
-            fs.writeFileSync('./commands_dc/_Game/_data/3Won.json', JSON.stringify(data), ( err )=>{ console.log(err) })
-            return;
+            if(msg.mentions.users.first())
+            {
+                const Opponnent = msg.mentions.users.first();
+                const connectedIDs = tools.module.connectIDs(msg.author.id, Opponnent.id);
+                const data = JSON.parse(fs.readFileSync('commands_dc/_Game/_data/3Won.json', {encoding: 'utf-8'}));
+                if(!data[connectedIDs])
+                {
+                    const embed = new discord.MessageEmbed()
+                    .addFields({name:`Error!`, value: `> You didn't fought against him.`});
+                
+                msg.channel.send(embed);
+                return;
+                }
+                else {
+                    const newGames = data;
+                    delete newGames[connectedIDs];
+                    fs.writeFileSync('commands_dc/_Game/_data/3Won.json', JSON.stringify(newGames), (err) => {
+                        const embed = new discord.MessageEmbed()
+                        .addFields({name:`Uhmm Upps :-)`, value: `> Seems like I made a mistake this Time, would you like to try again?`});
+                
+                        msg.channel.send(embed);
+                        return;
+                    })
+                    const embed = new discord.MessageEmbed()
+                    .addFields({name:`Success :)`, value: `> Your Game has been deleted.`});
+                
+                    msg.channel.send(embed);
+                    return;
+                }
+            }
         }
         if(msg.mentions.users.first())
         {
@@ -165,9 +184,7 @@ bot.on('message',async msg => {
             msg.button = disbut;
             commands.Game.threeWon.run(msg);
         }
-        
     }
-
     /*
     //infos
     else if(msg.content.startsWith(`${prefix}getTweets`))
@@ -216,8 +233,8 @@ bot.on('message',async msg => {
     {
         statusArr.push(msg.content);
     }
-})
-let statusArr = [`TTT and 3 won`];
+});
+let statusArr = [`TTT and 3 won`, 'for optimizition tips or Game ideas write an DM to weirdo_flugzeug#0919', 'get Commands with rg!help'];
 let currentStatus = 0;
 setInterval(()=>{
     let length = statusArr.length;
