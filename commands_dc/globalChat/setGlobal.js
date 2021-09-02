@@ -2,7 +2,7 @@ const fs = require('fs');
 const setGlobal = (bot, discord, msg) => {
     if(msg.member.hasPermission('MANAGE_CHANNELS') || msg.member.hasPermission('ADMINISTRATION'))
     {
-        let data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
+        let data = fs.readFileSync('./globalChatServers.json',{encoding: 'utf-8'});
         const oldChannels = JSON.parse(data);
         data = JSON.parse(data);
         const channel = msg.mentions.channels.first();
