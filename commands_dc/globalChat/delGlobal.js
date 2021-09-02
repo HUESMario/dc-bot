@@ -3,13 +3,13 @@ const fs = require('fs');
 const delGlobal = (msg, discord, bot) => {
     if(msg.member.hasPermission('MANAGE_CHANNELS') || msg.member.hasPermission('ADMINISTRATION'))
     {
-        let data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
+        let data = fs.readFileSync('./globalChatServers.json',{encoding: 'utf-8'});
         const oldChannels = JSON.parse(data);
         data = JSON.parse(data);
         const channel = msg.mentions.channels.first();
         setGlobal = channel;
         delete oldChannels[msg.guild.id + msg.channel.id];
-        fs.writeFileSync('./serversForGlobalChat.json', `${JSON.stringify(oldChannels)}`, (err) => {
+        fs.writeFileSync('./globalChatServers.json', `${JSON.stringify(oldChannels)}`, (err) => {
             if(err) console.log(err);
         })
         const globalEmbed = new discord.MessageEmbed()
