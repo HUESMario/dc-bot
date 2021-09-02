@@ -11,7 +11,7 @@ const setGlobal = (bot, discord, msg) => {
         fs.writeFileSync('./serversForGlobalChat.json', `${JSON.stringify(oldChannels)}`, (err) => {
             if(err) console.log(err);
         })
-        data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'}));
+        data = JSON.parse(fs.readFileSync('./globalChatServers.json',{encoding: 'utf-8'}));
         const globalEmbed = new discord.MessageEmbed()
                 .setThumbnail(bot.user.avatarURL)
                 .setAuthor(msg.author.username, msg.author.avatarURL())
