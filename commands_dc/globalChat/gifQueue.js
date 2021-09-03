@@ -27,7 +27,7 @@ class queueList
         deleteFirst();
         if(this.size !== 0)
         {
-        const data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json', {encoding: 'utf-8'}));
+        const data = JSON.parse(fs.readFileSync('./globalChatServers.json', {encoding: 'utf-8'}));
         const registeredGuilds = Object.keys(data);
         getURLSFromImages(currentGif.gif.url).then(urls => {
             console.log('done')

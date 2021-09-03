@@ -2,16 +2,16 @@ const fs = require('fs');
 const setGlobal = (bot, discord, msg) => {
     if(msg.member.hasPermission('MANAGE_CHANNELS') || msg.member.hasPermission('ADMINISTRATION'))
     {
-        let data = fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'});
+        let data = fs.readFileSync('./globalChatServers.json',{encoding: 'utf-8'});
         const oldChannels = JSON.parse(data);
         data = JSON.parse(data);
         const channel = msg.mentions.channels.first();
         oldChannels[msg.guild.id + msg.channel.id] = {}
         oldChannels[msg.guild.id + msg.channel.id].globalChannel = channel;
-        fs.writeFileSync('./serversForGlobalChat.json', `${JSON.stringify(oldChannels)}`, (err) => {
+        fs.writeFileSync('./globalChatServers.json', `${JSON.stringify(oldChannels)}`, (err) => {
             if(err) console.log(err);
         })
-        data = JSON.parse(fs.readFileSync('./serversForGlobalChat.json',{encoding: 'utf-8'}));
+        data = JSON.parse(fs.readFileSync('./globalChatServers.json',{encoding: 'utf-8'}));
         const globalEmbed = new discord.MessageEmbed()
                 .setThumbnail(bot.user.avatarURL)
                 .setAuthor(msg.author.username, msg.author.avatarURL())
