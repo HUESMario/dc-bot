@@ -16,6 +16,8 @@ const queryString = require('querystring');
 const gifQueue = require('./commands_dc/globalChat/gifQueue.js');
 const gifList = new gifQueue.queueList();
 let prefix = 'rg!';
+let statusArr = [`TTT and 3 won`, 'welcome in the Group Hangman!', 'get Commands with rg!help'];
+let currentStatus = 0;
 
 bot.on('clickButton', (button) => {
     if(button.message.author.id === '842053072666099733' || button.message.author.id === '799388234877632558')
@@ -185,6 +187,14 @@ bot.on('message',async msg => {
             commands.Game.threeWon.run(msg);
         }
     }
+    else if(msg.content === `${prefix}hangman`)
+    {
+        commands.Game.hangman.startGame(msg);
+    }
+    else if(msg.content.startsWith(`${prefix}guess`))
+    {
+        commands.Game.hangman.checkLetter(msg);
+    }
     /*
     //infos
     else if(msg.content.startsWith(`${prefix}getTweets`))
@@ -200,7 +210,7 @@ bot.on('message',async msg => {
         });
     }
     */
-   //owner Commands
+   //My Commands
    
    else if(msg.content === 'rg!list Status' && msg.author.id === '774752109064486932')
    {
@@ -234,25 +244,20 @@ bot.on('message',async msg => {
         statusArr.push(msg.content);
     }
 });
-let statusArr = [`TTT and 3 won`, 'for optimizition tips or Game ideas write an DM to weirdo_flugzeug#0919', 'get Commands with rg!help'];
-let currentStatus = 0;
 setInterval(()=>{
     let length = statusArr.length;
-    bot.user.setActivity(statusArr[currentStatus]);
-    if(length === 1)
+    if(currentStatus === length - 1)
     {
-        return;
+        currentStatus = 0;
     }
     else 
     {
-        if(currentStatus === length - 1)
-        {
-            currentStatus = 0;
-        }
-        else 
-        {
-            ++currentStatus;
-        }
+        ++currentStatus;
     }
+    if(!statusArr[currentStatus])
+    {
+        currentStatus = 0;
+    }
+    bot.user.setActivity(statusArr[currentStatus]);
 }, 10000);
 bot.login(token.token);

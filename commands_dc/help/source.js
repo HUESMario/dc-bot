@@ -4,7 +4,7 @@ const source = (msg, discord) => {
     .setColor(msg.color)
     .setTitle(`roleing in the Game`)
     .setAuthor(msg.author.username)
-    .addFields({name: "> `Source`", value: `DM the owner ^^`})  
+    .addFields({name: "> `Source`", value: `DM the Bot Owner :)`})  
     .setFooter(msg.guild.name, msg.guild.iconURL());
 
     msg.channel.send({embed: msg.embed});

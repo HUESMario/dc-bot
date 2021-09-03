@@ -2,7 +2,7 @@
 node_modules
 
 # secret files:
-#Token.js
+Token.js
 globalChatServers.json
 
 commands_dc/_Game/_data/ttt.json
