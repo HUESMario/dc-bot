@@ -6,9 +6,8 @@ const tools = require('../../tools/tools.js');
 let Player1;
 let Player2;
 let activePlayer = 0;
-const playerChars = [[' ', 1], [' ', 3]];
+const playerChars = [[' ', 'PRIMARY'], [' ', 'SUCCESS']];
 let won = 0;
-let button;
 
 let fields;
 
@@ -37,16 +36,16 @@ const threeWonGame = (msg) =>
 
 const threeClick = async (button) => 
 {
-    const clickUser = button.clicker;
+    const clickUser = button.member;
     const idsOfPlayers = tools.module.splitIDs(button.message.embeds[0].fields[0].value);
     const idsOfPlayersConnected = tools.module.extractID(button.message.embeds[0].fields[0]);
     
     const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/3Won.json', (err) => {console.log(err)}));
     loadGameData(idsOfPlayersConnected, data);
-    const ids = tools.module.extractPos(button.id);
+    const ids = tools.module.extractPos(button.component.customId);
     button.message.button = button.button;
 
-    if(idsOfPlayers[activePlayer] === clickUser.user.id)
+    if(idsOfPlayers[activePlayer] === clickUser.id)
     {
         fields[[ids[0]]][ids[1]].style = playerChars[activePlayer][1];
         checkForWin(button.message);
@@ -74,11 +73,11 @@ const threeClick = async (button) =>
 const initializeField = () => {
     won = 0;
     fields = [
-        [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}], 
-        [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}], 
-        [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}],
-        [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}], 
-        [{character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}, {character: " ", style: 2, Disabled: true}]
+        [{character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}], 
+        [{character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}], 
+        [{character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}],
+        [{character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}], 
+        [{character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}]
     ];
 }
 
@@ -87,7 +86,7 @@ const checkForWin = (msg) => {
     {
         for(let column = 0; column < fields[row].length; ++column)
         {
-            if(fields[row][column].style !== 2)
+            if(fields[row][column].style !== 'SUCCESS')
             {
                 const Player = fields[row][column].style;
                 //nach oben/unten
@@ -99,22 +98,21 @@ const checkForWin = (msg) => {
                         {
                             if(fields[row + 2][column].style === Player)
                             {
-                                console.log('up/down');
-                                if(fields[row + 2][column].style === 1)
+                                if(fields[row + 2][column].style === 'PRIMARY')
                                 {
                                     disableAll();
-                                    fields[row][column].style = 4;
-                                    fields[row + 1][column].style = 4;
-                                    fields[row + 2][column].style = 4;
+                                    fields[row][column].style = 'DANGER';
+                                    fields[row + 1][column].style = 'DANGER';
+                                    fields[row + 2][column].style = 'DANGER';
                                     getPlayfield(msg);
                                     won = 1;
                                 }
-                                else if(fields[row + 2][column].style === 3)
+                                else if(fields[row + 2][column].style === 'SUCCESS')
                                 {
                                     disableAll();
-                                    fields[row][column].style = 4;
-                                    fields[row + 1][column].style = 4;
-                                    fields[row + 2][column].style = 4;
+                                    fields[row][column].style = 'DANGER';
+                                    fields[row + 1][column].style = 'DANGER';
+                                    fields[row + 2][column].style = 'DANGER';
                                     getPlayfield(msg);
                                     won = 2;
                                 }
@@ -134,22 +132,21 @@ const checkForWin = (msg) => {
                                 {
                                     if(fields[row + 2][column + 2].style === Player)
                                     {
-                                        console.log('up left');
-                                        if(fields[row + 2][column + 2].style === 1)
+                                        if(fields[row + 2][column + 2].style === 'PRIMARY')
                                         {
                                             disableAll();
-                                            fields[row][column].style = 4;
-                                            fields[row + 1][column + 1].style = 4;
-                                            fields[row + 2][column + 2].style = 4;
+                                            fields[row][column].style = 'DANGER';
+                                            fields[row + 1][column + 1].style = 'DANGER';
+                                            fields[row + 2][column + 2].style = 'DANGER';
                                             getPlayfield(msg);
                                             won = 1;
                                         }
-                                        else if(fields[row + 2][column + 2].style === 3)
+                                        else if(fields[row + 2][column + 2].style === 'SUCCESS')
                                         {
                                             disableAll();
-                                            fields[row][column].style = 4;
-                                            fields[row + 1][column + 1].style = 4;
-                                            fields[row + 1][column + 2].style = 4;
+                                            fields[row][column].style = 'DANGER';
+                                            fields[row + 1][column + 1].style = 'DANGER';
+                                            fields[row + 1][column + 2].style = 'DANGER';
                                             getPlayfield(msg);
                                             won = 2;
                                         }
@@ -170,22 +167,21 @@ const checkForWin = (msg) => {
                                 {
                                     if(fields[row + 2][column - 2].style === Player)
                                     {
-                                        console.log('up rechts');
-                                        if(fields[row + 2][column - 2].style === 1)
+                                        if(fields[row + 2][column - 2].style === 'PRIMARY')
                                         {
                                             disableAll();
-                                            fields[row][column].style = 4;
-                                            fields[row + 1][column - 1].style = 4;
-                                            fields[row + 2][column - 2].style = 4;
+                                            fields[row][column].style = 'DANGER';
+                                            fields[row + 1][column - 1].style = 'DANGER';
+                                            fields[row + 2][column - 2].style = 'DANGER';
                                             getPlayfield(msg)
                                             won = 1;
                                         }
-                                        else if(fields[row + 2][column - 2].style === 3)
+                                        else if(fields[row + 2][column - 2].style === 'SUCCESS')
                                         {
                                             disableAll();
-                                            fields[row][column].style = 4;
-                                            fields[row + 1][column - 1].style = 4;
-                                            fields[row + 2][column - 2].style = 4;
+                                            fields[row][column].style = 'DANGER';
+                                            fields[row + 1][column - 1].style = 'DANGER';
+                                            fields[row + 2][column - 2].style = 'DANGER';
                                             getPlayfield(msg);
                                             won = 2;
                                         }
@@ -205,22 +201,21 @@ const checkForWin = (msg) => {
                         {
                             if(fields[row][column + 2].style === Player)
                             {
-                                console.log('left/right');
-                                if(fields[row][column + 2].style === 1)
+                                if(fields[row][column + 2].style === 'PRIMARY')
                                 {
                                     disableAll();
-                                    fields[row][column].style = 4;
-                                    fields[row][column + 1].style = 4;
-                                    fields[row][column + 2].style = 4;
+                                    fields[row][column].style = 'DANGER';
+                                    fields[row][column + 1].style = 'DANGER';
+                                    fields[row][column + 2].style = 'DANGER';
                                     getPlayfield(msg);
                                     won = 1;
                                 }
-                                else if(fields[row][column + 2].style === 3)
+                                else if(fields[row][column + 2].style === 'SUCCESS')
                                 {
                                     disableAll();
-                                    fields[row][column].style = 4;
-                                    fields[row][column + 1].style = 4;
-                                    fields[row][column + 2].style = 4;
+                                    fields[row][column].style = 'DANGER';
+                                    fields[row][column + 1].style = 'DANGER';
+                                    fields[row][column + 2].style = 'DANGER';
                                     getPlayfield(msg);
                                     won = 2;
                                 }
@@ -249,9 +244,9 @@ const computePlayfield = () => {
     {
         for(let j = 0; j < fields[i].length; ++j)
         {
-            if(fields[i][j].style === 2)
+            if(fields[i][j].style === 'SECONDARY')
             {
-               if(fields[i + 1] === undefined || fields[i + 1][j].style !== 2)
+               if(fields[i + 1] === undefined || fields[i + 1][j].style !== 'SECONDARY')
                {
                    fields[i][j].Disabled = false;
                }
@@ -260,9 +255,7 @@ const computePlayfield = () => {
     }
 }
 
-const switchPlayer = () => {
-    activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
-}
+const switchPlayer = () => activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
 
 const saveGameData = (connectedID, data) => {
     data[connectedID] = {};
@@ -291,9 +284,10 @@ const deleteGameData = (connectedID, getData) => {
 
 const getPlayfield = (msg) => {
     const playerEmbed = new discord.MessageEmbed();
+
     if(!Player1.user)
     {
-        playerEmbed.addField('Player IDs:', `${[Player1.userID, Player2.userID].join('&')}`);
+        playerEmbed.addField('Player IDs:', `${[Player1.userId, Player2.userId].join('&')}`);
     }
     else
     {
@@ -349,21 +343,22 @@ const getPlayfield = (msg) => {
 
     for(let i = 0; i < fields.length; ++i)
     {
-        const row = new button.MessageActionRow();
+        const row = new discord.MessageActionRow();
         for(let j = 0; j < fields[i].length; ++j)
         {
-            const btn = new button.MessageButton()
-            .setID(`${i}:${j}`)
+            const btn = new discord.MessageButton()
+            .setCustomId(`${i}:${j}`)
             .setStyle(fields[i][j].style)
             .setLabel(fields[i][j].character)
             .setDisabled(fields[i][j].Disabled);
 
-            row.addComponent(btn);
+            if(fields[i][j].style !== 'SECONDARY') console.log(fields[i][j].style);
+            row.addComponents(btn);
         }
         rows.push(row);
     }
     
-    msg.channel.send({embed: playerEmbed,components: rows});
+    msg.channel.send({embeds: [playerEmbed], components: [rows[0], rows[1], rows[2], rows[3], rows[4]]});
 }
 
 module.exports = {

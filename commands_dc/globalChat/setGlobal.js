@@ -1,6 +1,7 @@
 const fs = require('fs');
 const setGlobal = (bot, discord, msg) => {
-    if(msg.member.hasPermission('MANAGE_CHANNELS') || msg.member.hasPermission('ADMINISTRATION'))
+    
+    if(msg.member.permissions.has(discord.Permissions.FLAGS.MANAGE_CHANNELS) || msg.member.permission.has(discord.Permissions.FLAGS.ADMINISTRATOR))
     {
         let data = fs.readFileSync('./globalChatServers.json',{encoding: 'utf-8'});
         const oldChannels = JSON.parse(data);
@@ -22,7 +23,7 @@ const setGlobal = (bot, discord, msg) => {
 
         for(let i = 0; i < registeredGuilds.length; ++i)
         {
-            bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
+            bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send({embeds: [globalEmbed]});
         }
     }
     else
@@ -35,7 +36,7 @@ const setGlobal = (bot, discord, msg) => {
         .addField('> `Error`', 'You dont have manage Channel or Admin Permissions');
 
 
-        msg.channel.send(errorEmbed);
+        msg.channel.send([{embeds: errorEmbed}]);
         return;
     }
 }

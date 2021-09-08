@@ -4,7 +4,7 @@ const sendGif = require('./sendGif.js');
 const imBored = require('./imBored.js');
 
 const global = async (discord, msg, bot, gifList, data) => {
-    if(msg.author.bot && msg.author.id !== '842053072666099733')
+    if(msg.author.bot && (msg.author.id !== '842053072666099733' || msg.author.id !== '799388234877632558'))
     {
         msg.delete();
         return;
@@ -13,7 +13,10 @@ const global = async (discord, msg, bot, gifList, data) => {
     if(msg.channel.id === setGlobal.id && !msg.author.bot)
     {
         const oldMsg = msg;
-        msg.delete();
+        if(msg.deletable)
+        {
+            await msg.delete();
+        }
         const registeredGuilds = Object.keys(data);
         for (let i = 0; i < registeredGuilds.length; ++i) {
             const globalEmbed = new discord.MessageEmbed()
@@ -21,9 +24,10 @@ const global = async (discord, msg, bot, gifList, data) => {
             .setAuthor(oldMsg.author.username, oldMsg.author.avatarURL())
             .setColor(oldMsg.color)
             .setFooter(oldMsg.guild.name, oldMsg.guild.iconURL());
+
             if(oldMsg.reference)
             {
-            const referenceMSG = await msg.channel.messages.fetch(msg.reference.messageID);
+            const referenceMSG = await oldMsg.channel.messages.fetch(oldMsg.reference.messageID);
                 if(referenceMSG.embeds.length === 0)
                 {
                     globalEmbed.addFields({
@@ -47,7 +51,7 @@ const global = async (discord, msg, bot, gifList, data) => {
             }
                 if(oldMsg.embeds.length > 0)
                 {
-                    sendGif.sendGif(msg, gifList, bot)
+                    sendGif.sendGif(oldMsg, gifList, bot)
                     return;
                 }
                 else if(oldMsg.attachments.toJSON().length > 0)
@@ -64,7 +68,7 @@ const global = async (discord, msg, bot, gifList, data) => {
                 text.then(value => {
                     globalEmbed.setAuthor(bot.user.username, bot.user.avatarURL())
                     globalEmbed.addField('Bored? Not anymore!', `activity: ${value.activity} \n link: ${value.link} \n Your need of Friends: ${value.participants > 0 ? value.participants - 1 : 0} \n Type of activity: ${value.type}`);
-                    bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
+                    bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send({embeds: [globalEmbed]});
                 }).catch(err=>{console.log(err)});
                 
             }
@@ -72,9 +76,9 @@ const global = async (discord, msg, bot, gifList, data) => {
                 {
                     globalEmbed.addFields({name: 'rg Global', value: `${oldMsg.content}`})
                 }
-                if(msg.content !== "rg!imBored")
+                if(oldMsg.content !== "rg!imBored")
                 {
-                    await bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send(globalEmbed);
+                    await bot.channels.cache.get(data[registeredGuilds[i]].globalChannel.id).send({embeds: [globalEmbed]});
                 }
             }
         }

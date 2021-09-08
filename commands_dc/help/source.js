@@ -7,7 +7,7 @@ const source = (msg, discord) => {
     .addFields({name: "> `Source`", value: `DM the Bot Owner :)`})  
     .setFooter(msg.guild.name, msg.guild.iconURL());
 
-    msg.channel.send({embed: msg.embed});
+    msg.channel.send({embeds: msg.embed});
 }
 module.exports = {
     run: source

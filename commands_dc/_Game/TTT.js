@@ -16,13 +16,12 @@ const solutions = [
 ]
 
 let fields = [
-    [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
-    [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
-    [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}]
+    [{character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}], 
+    [{character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}], 
+    [{character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}]
 ]
 
 const TTT = async(msg, discord) => {
-    msgCopy = msg;
     const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/TTT.json'));
     Player1 = msg.Player1;
     Player2 = msg.Player2;
@@ -38,14 +37,14 @@ const TTT = async(msg, discord) => {
         .addFields({name: "> TTT", value: `Lonely? Choose one to Play with you ^^!`})
         .setFooter(msg.guild.name, msg.guild.iconURL())
 
-        msg.channel.send(embed);
+        msg.channel.send({embeds: [embed]});
         return;
     }
     activePlayer = 0;
     fields = [
-        [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
-        [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}], 
-        [{character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}, {character: " ", style: 2, Disabled: false}]
+        [{character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}], 
+        [{character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}], 
+        [{character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}]
     ]
 
     const joinedIDs = tools.module.connectIDs(Player1.id, Player2.id);
@@ -71,7 +70,7 @@ const TTT = async(msg, discord) => {
         .addFields({name: "> TTT", value: `You two already have a Game, I'll load it for you.`})
         .setFooter(msg.guild.name, msg.guild.iconURL())
 
-        msg.channel.send(embed);
+        msg.channel.send({embeds: [embed]});
         getGameData(joinedIDs, data);
         getPlayfield(msg);        
     }
@@ -82,10 +81,10 @@ const handleTTT = async (handleData) => {
     const isCorrectPlayer = () => {
         const splitedUser = tools.module.splitIDs(handleData.message.embeds[0].fields[0].value);
         const clickedUser = () => {
-            return handleData.clicker;
+            return handleData.member;
         }
         const getObject = clickedUser();
-        if(splitedUser[0] === getObject.user.id || splitedUser[1] === getObject.user.id)
+        if(splitedUser[0] === getObject.id || splitedUser[1] === getObject.id)
         {
             return true;
         }
@@ -94,10 +93,10 @@ const handleTTT = async (handleData) => {
     const isCurrentPlayer = () => {
         const splitedUser = tools.module.splitIDs(handleData.message.embeds[0].fields[0].value);
         const clickedUser = () => {
-            return handleData.clicker;
+            return handleData.member;
         }
         const getObject = clickedUser();
-        if(splitedUser[activePlayer] === getObject.user.id)
+        if(splitedUser[activePlayer] === getObject.id)
         {
             return true;
         }
@@ -229,72 +228,66 @@ const getPlayfield = (msg, won = false) => {
         }
     }
     playerEmbed.addField('Game:', `Tic Tac Toe`);
-    const upper_left = new msg.button.MessageButton()
-    .setID('0:0')
+    const upper_left = new discord.MessageButton()
+    .setCustomId('0:0')
     .setStyle(fields[0][0].style)
     .setLabel(fields[0][0].character)
     .setDisabled(fields[0][0].Disabled);
-    const upper_middle = new msg.button.MessageButton()
-    .setID('0:1')
+    const upper_middle = new discord.MessageButton()
+    .setCustomId('0:1')
     .setStyle(fields[0][1].style)
     .setLabel(fields[0][1].character)
     .setDisabled(fields[0][1].Disabled);
-    const upper_right = new msg.button.MessageButton()
-    .setID('0:2')
+    const upper_right = new discord.MessageButton()
+    .setCustomId('0:2')
     .setStyle(fields[0][2].style)
     .setLabel(fields[0][2].character)
     .setDisabled(fields[0][2].Disabled);
 
-    const middle_left = new msg.button.MessageButton()
-    .setID('1:0')
+    const middle_left = new discord.MessageButton()
+    .setCustomId('1:0')
     .setStyle(fields[1][0].style)
     .setLabel(fields[1][0].character)
     .setDisabled(fields[1][0].Disabled);
-    const middle_middle = new msg.button.MessageButton()
-    .setID('1:1')
+    const middle_middle = new discord.MessageButton()
+    .setCustomId('1:1')
     .setStyle(fields[1][1].style)
     .setLabel(fields[1][1].character)
     .setDisabled(fields[1][1].Disabled);
-    const middle_right = new msg.button.MessageButton()
-    .setID('1:2')
+    const middle_right = new discord.MessageButton()
+    .setCustomId('1:2')
     .setStyle(fields[1][2].style)
     .setLabel(fields[1][2].character)
     .setDisabled(fields[1][2].Disabled);
 
-    const buttom_left = new msg.button.MessageButton()
-    .setID('2:0')
+    const buttom_left = new discord.MessageButton()
+    .setCustomId('2:0')
     .setStyle(fields[2][0].style)
     .setLabel(fields[2][0].character)
     .setDisabled(fields[2][0].Disabled);
-    const buttom_middle = new msg.button.MessageButton()
-    .setID('2:1')
+    const buttom_middle = new discord.MessageButton()
+    .setCustomId('2:1')
     .setStyle(fields[2][1].style)
     .setLabel(fields[2][1].character)
     .setDisabled(fields[2][1].Disabled);
-    const buttom_right = new msg.button.MessageButton()
-    .setID('2:2')
+    const buttom_right = new discord.MessageButton()
+    .setCustomId('2:2')
     .setStyle(fields[2][2].style)
     .setLabel(fields[2][2].character)
     .setDisabled(fields[2][2].Disabled);
 
 
-    const row1 = new msg.button.MessageActionRow()
-    .addComponent(upper_left)
-    .addComponent(upper_middle)
-    .addComponent(upper_right);
+    const row1 = new discord.MessageActionRow()
+    .addComponents(upper_left, upper_middle, upper_right);
 
-    const row2 = new msg.button.MessageActionRow()
-    .addComponent(middle_left)
-    .addComponent(middle_middle)
-    .addComponent(middle_right);
+    const row2 = new discord.MessageActionRow()
+    .addComponents(middle_left, middle_middle, middle_right);
     
-    const row3 = new msg.button.MessageActionRow()
-    .addComponent(buttom_left)
-    .addComponent(buttom_middle)
-    .addComponent(buttom_right);
+    const row3 = new discord.MessageActionRow()
+    .addComponents(buttom_left, buttom_middle, buttom_right);
 
     
-            msg.channel.send({embed: playerEmbed,components: [row1, row2, row3]});
+    msg.channel.send({embeds: [playerEmbed],components: [row1, row2, row3]});
     return [row1, row2, row3]
 }
 
@@ -311,9 +304,9 @@ const checkForWin = (componentsRows) => {
             let button3 = componentsRows[position3[0]][position3[1]];
             if(button1.character === playerChars[activePlayer][0] && button2.character === playerChars[activePlayer][0] && button3.character === playerChars[activePlayer][0])
             {
-                fields[position1[0]][position1[1]].style = 4;
-                fields[position2[0]][position2[1]].style = 4;
-                fields[position3[0]][position3[1]].style = 4;
+                fields[position1[0]][position1[1]].style = 'DANGER';
+                fields[position2[0]][position2[1]].style = 'DANGER';
+                fields[position3[0]][position3[1]].style = 'DANGER';
                 won = true;
             }
         }
@@ -326,7 +319,7 @@ const changePlayer = () => {
 }
 
 const changeField = (button) => {
-    const getIndexes = tools.module.extractPos(button.id)
+    const getIndexes = tools.module.extractPos(button.component.customId)
     fields[getIndexes[0]][getIndexes[1]].character = playerChars[activePlayer][0]; 
     fields[getIndexes[0]][getIndexes[1]].style = playerChars[activePlayer][1]; 
 }

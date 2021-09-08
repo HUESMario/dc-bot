@@ -1,13 +1,10 @@
 {
   "name": "roleinginthegame",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "Bot for Games",
   "main": "roleing in the Game.js",
   "dependencies": {
-    "dc_ref_msg": "^1.0.4",
-    "discord-buttons": "^3.2.1",
-    "discord-tictactoe": "^2.1.1",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.1.0",
     "get-image-urls": "^1.0.5",
     "mongodb": "^3.6.10",
     "node-tweet-stream": "^2.1.0",
@@ -17,7 +14,6 @@
     "superagent": "^6.1.0",
     "tedious": "^11.4.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node \"roleing in the Game.js\""

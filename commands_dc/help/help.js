@@ -16,11 +16,13 @@ const help = (msg, discord) => {
         {name: "> `rg Global`", value: `You can get something to do by typing in the rg Chat Channel: **rg!imBored**`},
         {name: "> `different`", value: `You can get my Code from **rg!source**
         ${msg.seperator}
+        If you want to support me Invite me with **rg!invite**.
+        ${msg.seperator}
         You can Send feedback through sliding in my DMs: **weirdo_flugzeug#0919** or write me an E-mail: **happlemnm@gmail.com**`}
     )  
     .setFooter(msg.guild.name, msg.guild.iconURL())
 
-    msg.channel.send(embed);
+    msg.channel.send({embeds: [embed]});
     return;
 }
 

@@ -1,5 +1,6 @@
 //Help
 const help = require('./help/help.js');
+const invite = require('./help/invite.js');
 const source = require('./help/source.js')
 //Admin
 //Games
@@ -9,10 +10,13 @@ const threeWon = require('./_Game/3 won.js');
 const global = require('./globalChat/globalChat.js');
 const { handleClick } = require('./_Game/3 won.js');
 const hangman = require('./_Game/hangman.js');
+//news
+const twitter = require('./news/twitter.js');
 
 module.exports = {
     help: { 
         help: help.run,
+        invite: invite.run,
         source: source.run
     },
     Admin: {
@@ -37,6 +41,12 @@ module.exports = {
         delGlobal: global.delGlobal,
         setGlobal: global.setGlobal,
         globalChat: global.global
+    },
+    news:
+    {
+        twitter:
+        {
+            run: twitter
+        }
     }
-    
 }

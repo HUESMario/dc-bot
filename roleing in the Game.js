@@ -1,14 +1,8 @@
 `strict mode`
 
 const discord = require('discord.js');
-const bot = new discord.Client();
-const disbut = require('discord-buttons');
-disbut(bot);
+const bot = new discord.Client({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_MEMBERS]});
 const commands = require('./commands_dc/commands.js');
-const cfg = require('./config.json');
-const tw = require('node-tweet-stream')(cfg);
-const getReference = require('dc_ref_msg');
-getReference.extend(getReference.reference)
 const tools = require('./tools/tools.js');
 const fs = require('fs');
 const token = require('./Token.js');
@@ -16,13 +10,19 @@ const queryString = require('querystring');
 const gifQueue = require('./commands_dc/globalChat/gifQueue.js');
 const gifList = new gifQueue.queueList();
 let prefix = 'rg!';
-let statusArr = [`TTT and 3 won`, 'welcome in the Group Hangman!', 'get Commands with rg!help'];
+let statusArr = [`TTT and 3 won`, 'updating to discord.js v13', 'get Commands with rg!help'];
 let currentStatus = 0;
 
-bot.on('clickButton', (button) => {
+bot.on('ready', () => {
+    bot.user.setStatus('online') 
+    bot.user.setActivity(`TTT and 3 won`)
+    console.log(`I'm driving and I'm speeding.`);
+})
+
+bot.on('interactionCreate', (button) => {
+    if(!button.isButton()) return;
     if(button.message.author.id === '842053072666099733' || button.message.author.id === '799388234877632558')
     { 
-        button.button = disbut;
         if(button.message.components.length === 5)
         {
             commands.Game.threeWon.handleClick(button);
@@ -37,14 +37,10 @@ bot.on('clickButton', (button) => {
     }
 })
 
-bot.on('ready', () => {
-    bot.user.setStatus('online') 
-    bot.user.setActivity(`TTT and 3 won`)
-    console.log(`I'm driving and I'm speeding.`);
-})
+bot.on('messageCreate', async msg => {
+    if(msg.author.bot) return;
 
-bot.on('message',async msg => {
-    msg.color = '#13ab13';
+    msg.color = '#663399';
     msg.seperator = `//\\\\\\ \n \\\\\\\\//`;
     msg.prefix = prefix;
     msg.Player1 = msg.member;
@@ -54,15 +50,14 @@ bot.on('message',async msg => {
     {
         msg.Player2 = msg.mentions.members.first();
     }
-    
 
     //rg global
     const data = JSON.parse(fs.readFileSync('./globalChatServers.json', {encoding: 'utf-8'}));
     if(data[msg.guild.id + msg.channel.id])
     {
         await commands.global.globalChat(discord, msg, bot, gifList, data);
+        return;
     }
-    
     //Help
     if(msg.content == `${prefix}help`)
     {
@@ -70,9 +65,11 @@ bot.on('message',async msg => {
     }
     else if(msg.content === `${prefix}source`)
     {
-        msg.button;
-        msg.button = new disbut.MessageButton();
         commands.help.source(msg, discord);
+    }
+    else if(msg.content === `${prefix}invite`)
+    {
+        commands.help.invite(msg, discord);
     }
     //Admin
     
@@ -141,7 +138,6 @@ bot.on('message',async msg => {
             msg.channel.send(embed);
             return;
         }
-        msg.button = disbut;
         commands.Game.TTT.run(msg, discord);
     }
 
@@ -183,7 +179,6 @@ bot.on('message',async msg => {
         if(msg.mentions.users.first())
         {
             msg.Player2 = msg.mentions.members.first()
-            msg.button = disbut;
             commands.Game.threeWon.run(msg);
         }
     }
@@ -195,21 +190,11 @@ bot.on('message',async msg => {
     {
         commands.Game.hangman.checkLetter(msg);
     }
-    /*
     //infos
     else if(msg.content.startsWith(`${prefix}getTweets`))
     {
-        tw.language('en');
-        tw.track(msg.content.split(' ')[1] || 'Game');
-        tw.on('tweet', (tweet) => {
-            const embed = new discord.MessageEmbed()
-            .setAuthor(tweet.user.name, tweet.user.profile_background_image_url)
-            .addField('Tweet', tweet.text);
-
-            msg.channel.send(embed);
-        });
+        commands.news.twitter.run(msg, bot);
     }
-    */
    //My Commands
    
    else if(msg.content === 'rg!list Status' && msg.author.id === '774752109064486932')
@@ -244,6 +229,7 @@ bot.on('message',async msg => {
         statusArr.push(msg.content);
     }
 });
+
 setInterval(()=>{
     let length = statusArr.length;
     if(currentStatus === length - 1)
@@ -260,4 +246,5 @@ setInterval(()=>{
     }
     bot.user.setActivity(statusArr[currentStatus]);
 }, 10000);
+
 bot.login(token.token);
