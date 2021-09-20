@@ -1,5 +1,5 @@
 `strict mode`
-
+console.log(process.env);
 const discord = require('discord.js');
 const bot = new discord.Client({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_MEMBERS]});
 const commands = require('./commands_dc/commands.js');
@@ -12,8 +12,6 @@ const gifList = new gifQueue.queueList();
 let prefix = 'rg!';
 let statusArr = [`TTT and 3 won`, 'updating to discord.js v13', 'get Commands with rg!help'];
 let currentStatus = 0;
-
-console.log(process.env);
 
 bot.on('ready', () => {
     bot.user.setStatus('online') 
