@@ -63,15 +63,15 @@ bot.on('messageCreate', async msg => {
     //Help
     if(msg.content == `${prefix}help`)
     {
-        commands.help.help(msg, discord);
+        commands.help.help(msg);
     }
     else if(msg.content === `${prefix}source`)
     {
-        commands.help.source(msg, discord);
+        commands.help.source(msg);
     }
     else if(msg.content === `${prefix}invite`)
     {
-        commands.help.invite(msg, discord);
+        commands.help.invite(msg);
     }
     //Admin
     
