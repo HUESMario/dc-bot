@@ -13,6 +13,8 @@ let prefix = 'rg!';
 let statusArr = [`TTT and 3 won`, 'updating to discord.js v13', 'get Commands with rg!help'];
 let currentStatus = 0;
 
+console.log(process.env);
+
 bot.on('ready', () => {
     bot.user.setStatus('online') 
     bot.user.setActivity(`TTT and 3 won`)
