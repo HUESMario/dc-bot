@@ -1,4 +1,4 @@
-const gifQueue = require('./gifQueue.js');
+/*const gifQueue = require('./gifQueue.js');
 const psList = require('ps-list');
 const sendGif = (oldMsg, gifList, bot) => {
     psList().then(processes => {
@@ -20,4 +20,4 @@ const sendGif = (oldMsg, gifList, bot) => {
 }
 module.exports = {
     sendGif: sendGif
-}
+}*/

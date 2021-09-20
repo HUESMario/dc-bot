@@ -2,8 +2,15 @@ const setGlobal = require('./setGlobal.js');
 const delGlobal = require('./delGlobal.js');
 const sendGif = require('./sendGif.js');
 const imBored = require('./imBored.js');
+const discord = require('discord.js');
 
-const global = async (discord, msg, bot, gifList, data) => {
+/**
+     * @param {bot} bot argument to get every Channel
+     * @param {msg} msg argument to get User, Content, Pictures, Guild
+     * @param {data} data argument to get every registered Channel
+     */
+const global = async (bot, msg, data) => {
+    
     if(msg.author.bot && (msg.author.id !== '842053072666099733' || msg.author.id !== '799388234877632558'))
     {
         msg.delete();
@@ -41,7 +48,7 @@ const global = async (discord, msg, bot, gifList, data) => {
                 else if(referenceMSG.embeds.length === 1)
                 {
                     globalEmbed.addFields({
-                        name: `antwortet auf: ${referenceMSG.embeds[0].author.name}`, 
+                        name: `answers to: ${referenceMSG.embeds[0].author.name}`, 
                         value: `> ${referenceMSG.embeds[0].fields[referenceMSG.embeds[0].fields.length - 1].value}`,
                         image: {
                             url: referenceMSG.embeds[0].author.icon_url
@@ -51,8 +58,12 @@ const global = async (discord, msg, bot, gifList, data) => {
             }
                 if(oldMsg.embeds.length > 0)
                 {
-                    sendGif.sendGif(oldMsg, gifList, bot)
-                    return;
+                    //sendGif.sendGif(oldMsg, gifList, bot)
+                    globalEmbed.addFields({
+                        name: `Wait a Sec`, 
+                        value: '> currently I dont Support Gifs `reason:` \nIve got a Problem with get-Image-URLS and heroku and node v16 ( as Combination )',
+                        
+                    })
                 }
                 else if(oldMsg.attachments.toJSON().length > 0)
                 {
