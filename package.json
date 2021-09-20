@@ -3,6 +3,8 @@
   "version": "1.2.0",
   "description": "Bot for Games",
   "main": "roleing in the Game.js",
+  "engines" : { "node" : ">=0.16" },
+  "engineStrict" : true,
   "dependencies": {
     "discord.js": "^13.1.0",
     "get-image-urls": "^1.0.5",

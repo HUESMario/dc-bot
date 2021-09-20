@@ -4,7 +4,7 @@ const tw = require('node-tweet-stream')(cfg);
 
 const twitter = (msg, bot) => {
     const data = require('./receiver.json');
-    if(data[msg.channel.id])
+    if(data[msg.content.split(' ')[1]])
     {
         tw.language('en');
         tw.track(msg.content.split(' ')[1] || 'Game');
