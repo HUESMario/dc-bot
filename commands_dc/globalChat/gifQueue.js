@@ -1,4 +1,4 @@
-const getURLSFromImages = require('get-image-urls');
+//const getURLSFromImages = require('get-image-urls');
 const discord = require('discord.js');
 const {URLSearchParams} = require('url');
 const fs = require('fs');
@@ -93,7 +93,7 @@ class queueItem
     msg = {}
 }
 
-module.exports = {
+/*module.exports = {
     queueList: queueList,
     queueItem: queueItem
-};
+};*/
