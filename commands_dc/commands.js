@@ -8,6 +8,7 @@ const TTT = require('./_Game/TTT.js');
 const threeWon = require('./_Game/3 won.js');
 //rg Global
 const global = require('./globalChat/globalChat.js');
+//GamesClick
 const { handleClick } = require('./_Game/3 won.js');
 const hangman = require('./_Game/hangman.js');
 //news
