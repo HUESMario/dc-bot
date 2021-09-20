@@ -1,5 +1,12 @@
 const fs = require('fs');
-const setGlobal = (bot, discord, msg) => {
+const discord = require('discord.js');
+/**
+ * function to set rg!Chat
+ * @param {discord.Message} msg get channel and Guild to set rg!Chat.
+ * @param {discord.Client} bot get all rg!Chats to celebrate Newcomer.
+ * @returns void
+ */
+const setGlobal = (msg, bot) => {
     
     if(msg.member.permissions.has(discord.Permissions.FLAGS.MANAGE_CHANNELS) || msg.member.permission.has(discord.Permissions.FLAGS.ADMINISTRATOR))
     {

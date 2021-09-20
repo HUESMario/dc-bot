@@ -1,7 +1,11 @@
-const checkForChannel = (msg, channel) => {
-    if(msg.channel.id === channel.id) return true;
-    return false;    
-}
+/**
+ * Checks if the two Parameters have the Same Channel.id Numbers
+ * @param {discord.Message} msg 
+ * @param {discord.Channel} channel 
+ * @returns boolean
+ */
+const checkForChannel = (msg, channel) => msg.channel.id === channel.id
+
 exports.module = {
     checkForChannel: checkForChannel
 }

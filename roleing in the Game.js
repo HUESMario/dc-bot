@@ -9,7 +9,8 @@ const token = require('./Token.js');
 
 /*const queryString = require('querystring');
 const gifQueue = require('./commands_dc/globalChat/gifQueue.js');
-const gifList = new gifQueue.queueList();*/
+const gifList = new gifQueue.queueList();
+*/
 let prefix = 'rg!';
 let statusArr = [`TTT and 3 won`, 'updating to discord.js v13', 'get Commands with rg!help'];
 let currentStatus = 0;
@@ -76,11 +77,11 @@ bot.on('messageCreate', async msg => {
     
     else if(msg.content.startsWith(`${prefix}setGlobal`))
     {
-        commands.global.setGlobal(bot, discord, msg);
+        commands.global.setGlobal(msg, bot);
     }
     else if(msg.content === `${prefix}delGlobal`)
     {   
-        commands.global.delGlobal(msg, discord, bot);
+        commands.global.delGlobal(msg, bot);
     }
     //Games
 
@@ -139,7 +140,7 @@ bot.on('messageCreate', async msg => {
             msg.channel.send(embed);
             return;
         }
-        commands.Game.TTT.run(msg, discord);
+        commands.Game.TTT.run(msg);
     }
 
     else if(msg.content.startsWith(`${prefix}3won`))

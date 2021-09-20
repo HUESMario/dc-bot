@@ -1,4 +1,11 @@
-const help = (msg, discord) => {
+const discord = require('discord.js');
+
+/**
+ * This Function sends an Embed with all Commands.
+ * @param {discord.Message} msg get Channel to Send Embed to. 
+ * @returns void
+ */
+const help = (msg) => {
     const embed = new discord.MessageEmbed()
     .setColor(msg.color)
     .setTitle(`roleing in the Game`)

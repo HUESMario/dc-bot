@@ -1,5 +1,4 @@
 const extract = (rawPos) => {
-    console.log(rawPos);
     if(Array.isArray(rawPos))
     {
         return rawPos[0].split(':');

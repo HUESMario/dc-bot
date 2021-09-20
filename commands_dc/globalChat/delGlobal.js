@@ -1,6 +1,13 @@
 const fs = require('fs');
+const discord = require('discord.js');
 
-const delGlobal = (msg, discord, bot) => {
+/**
+ * 
+ * @param {discord.Message} msg get Channel and Guild.
+ * @param {*} bot get remaining Channels to send Leave Message.
+ * @returns void
+ */
+const delGlobal = (msg, bot) => {
     if(msg.member.hasPermission('MANAGE_CHANNELS') || msg.member.hasPermission('ADMINISTRATION'))
     {
         let data = fs.readFileSync('./globalChatServers.json',{encoding: 'utf-8'});

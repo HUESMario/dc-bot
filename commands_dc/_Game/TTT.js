@@ -5,7 +5,6 @@ const playerChars = [['X', 1], ['O', 3]];
 const fs = require('fs');
 const tools = require('../../tools/tools.js');
 const discord = require('discord.js');
-const { get } = require('https');
 let Player1;
 let Player2;
 
@@ -21,7 +20,14 @@ let fields = [
     [{character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}, {character: " ", style: 'SECONDARY', Disabled: false}]
 ]
 
-const TTT = async(msg, discord) => {
+/**
+ * initialise TTT Game
+ * Checks for correct Opponnent, if there is an Game already 
+ * and Sends Playfield.
+ * @param {discord.Message} msg get Player `Names`, `IDs`, `Channel`, `Guild`
+ * @returns {void}
+ */
+const TTT = async(msg) => {
     const data = JSON.parse(fs.readFileSync('./commands_dc/_Game/_data/TTT.json'));
     Player1 = msg.Player1;
     Player2 = msg.Player2;
@@ -77,6 +83,10 @@ const TTT = async(msg, discord) => {
 
 }
 
+/**
+ * Checks if Correct Player pressed Button, process Move and sends it to Channel.
+ * @param {discord.Interaction} handleData get `Player` `Names`, `IDs`, `Channel`, `Guild`, `Playfield`
+ */
 const handleTTT = async (handleData) => {
     const isCorrectPlayer = () => {
         const splitedUser = tools.module.splitIDs(handleData.message.embeds[0].fields[0].value);
@@ -135,6 +145,9 @@ const handleTTT = async (handleData) => {
     }
 }
 
+/**
+ * @returns {boolean} Checks for remaining Space.
+ */
 const isTherePlace = () => {
     for(let i = 0; i < fields.length; ++i)
     {
@@ -149,6 +162,9 @@ const isTherePlace = () => {
     return false;
 }
 
+/**
+ * if the Game End this function is called. It deletes the Game of Player 1 and 2, then sets every Field to Disabled so we can send the Playfield again.
+ */
 const gameEnd = () => {
     deleteGameData(Player1.userID, Player2.userID);
     for(let i = 0; i < fields.length; ++i)
@@ -159,7 +175,11 @@ const gameEnd = () => {
         }
     }
 }
-
+/**
+ * Saves the current Game Data
+ * @param {string} connectedID string ID from player 1 and 2 joined with an '&'
+ * @param {object} data Game Data stored in ./commands_dc/_Game/_data/TTT.json
+ */
 const saveGameData = (connectedID, data) => {
     data[connectedID] = {};
     data[connectedID]["fields"] = fields;
@@ -171,6 +191,11 @@ const saveGameData = (connectedID, data) => {
     })
 }
 
+/**
+ * Loads Game of Players
+ * @param {string} connectedIDs string ID from player 1 and 2 joined with an '&'
+ * @param {object} getData Game Data stored in ./commands_dc/_Game/_data/TTT.json
+ */
 const getGameData = (connectedIDs, getData) => {
     fields = getData[connectedIDs]["fields"];
     activePlayer = getData[connectedIDs]["activePlayer"];
@@ -178,13 +203,23 @@ const getGameData = (connectedIDs, getData) => {
     Player2 = getData[connectedIDs]["Player2"];
 }
 
+/**
+ * Deletes Game of Players
+ * @param {string} connectedID string ID from player 1 and 2 joined with an '&'
+ * @param {object} getData Game Data stored in ./commands_dc/_Game/_data/TTT.json
+ */
 const deleteGameData = (connectedID, getData) => {
     delete getData[connectedID];
     fs.writeFileSync('./commands_dc/_Game/_data/ttt.json', JSON.stringify(getData), (err) => {
         if(err) throw err;
     });
 }
-
+/**
+ * 
+ * @param {discord.Message} msg get Player `Names`, `IDs`, `Channel`, `Guild`
+ * @param {boolean} won get if someone already won to Check if we need to Send the Congrats.
+ * @returns {discord.MessageActionRow[]} multiple Button Rows
+ */
 const getPlayfield = (msg, won = false) => {
 
     const playerEmbed = new discord.MessageEmbed();
@@ -291,6 +326,11 @@ const getPlayfield = (msg, won = false) => {
     return [row1, row2, row3]
 }
 
+/**
+ * checks for Win of someone
+ * @param {discord.MessageActionRow[]} componentsRows List of fields
+ * @returns {boolean} if someone won or not
+ */
 const checkForWin = (componentsRows) => {
     let won = false;
     solutions.forEach(solution => {
@@ -313,11 +353,15 @@ const checkForWin = (componentsRows) => {
     });
     return won;
 }
+/**
+ * change active Player.
+ * @returns {null}
+ */
+const changePlayer = () => activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
 
-const changePlayer = () => {
-    activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
-}
-
+/**
+ * @param {discord.Interaction} button get components customId.
+ */
 const changeField = (button) => {
     const getIndexes = tools.module.extractPos(button.component.customId)
     fields[getIndexes[0]][getIndexes[1]].character = playerChars[activePlayer][0]; 

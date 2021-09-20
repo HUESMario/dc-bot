@@ -1,4 +1,3 @@
-//const getURLSFromImages = require('get-image-urls');
 const discord = require('discord.js');
 const {URLSearchParams} = require('url');
 const fs = require('fs');

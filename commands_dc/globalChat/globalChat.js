@@ -5,9 +5,9 @@ const imBored = require('./imBored.js');
 const discord = require('discord.js');
 
 /**
-     * @param {bot} bot argument to get every Channel
-     * @param {msg} msg argument to get User, Content, Pictures, Guild
-     * @param {data} data argument to get every registered Channel
+     * @param {discord.Client} bot argument to get every Channel
+     * @param {discord.Message} msg argument to get User, Content, Pictures, Guild
+     * @param {object} data argument to get every registered Channel
      */
 const global = async (bot, msg, data) => {
     

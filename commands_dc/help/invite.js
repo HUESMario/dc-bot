@@ -1,4 +1,11 @@
-const invite = (msg, discord) => {
+const discord = require('discord.js');
+
+/**
+ * send Embed and Button for Invite.
+ * @param {discord.Message} msg get Channel to Send Embed to. 
+ * @returns void
+ */
+const invite = (msg) => {
     const embed = new discord.MessageEmbed()
     .setColor(msg.color)
     .setTitle(`roleing in the Game`)

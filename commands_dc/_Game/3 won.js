@@ -11,6 +11,9 @@ let won = 0;
 
 let fields;
 
+/**
+ * @param {discord.Message} msg to get `Player`, `Opponent`, `Channel` and `Guild` 
+ */
 const threeWonGame = (msg) => 
 {
     Player1 = msg.Player1;
@@ -34,6 +37,10 @@ const threeWonGame = (msg) =>
     }
 }
 
+/**
+ * Computes click on Button and sends it to the Channel.
+ * @param {discord.Interaction} button get `Player`, `Opponent`, `Channel`, `Guild` and `Playfield` 
+ */
 const threeClick = async (button) => 
 {
     const clickUser = button.member;
@@ -69,8 +76,11 @@ const threeClick = async (button) =>
         button.message.channel.send("It's either not your turn or you're not participating.");
     }
 }
-
+/**
+ * Start the Game and reset `won`, `fields` and `activePlayer`
+ */
 const initializeField = () => {
+    activePlayer = 0;
     won = 0;
     fields = [
         [{character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}, {character: " ", style: 'SECONDARY', Disabled: true}], 
@@ -81,6 +91,11 @@ const initializeField = () => {
     ];
 }
 
+/**
+ * Checks if someone won the Game
+ * @param {discord.Message} msg 
+ * @returns {null} null
+ */
 const checkForWin = (msg) => {
     for(let row = 0; row < fields.length; ++row)
     {
@@ -229,6 +244,9 @@ const checkForWin = (msg) => {
     }
 }
 
+/**
+ * Disable all fields on the Playground, to Prepare the computation from `computePlayfield()`
+ */
 const disableAll = () => {
     for(let i = 0; i < fields.length; ++i)
     {
@@ -238,7 +256,9 @@ const disableAll = () => {
         }
     }
 }
-
+/**
+ * Computes all Active Fields
+ */
 const computePlayfield = () => {
     for(let i = fields.length - 1; i >= 0; --i)
     {
@@ -255,8 +275,19 @@ const computePlayfield = () => {
     }
 }
 
+
+/**
+ * Switchs the active Player
+ * @returns {null}
+ */
 const switchPlayer = () => activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
 
+
+/**
+ * Saves the current Game Data
+ * @param {string} connectedID string ID from player 1 and 2 joined with an '&'
+ * @param {object} data Game Data stored in ./commands_dc/_Game/_data/3Won.json
+ */
 const saveGameData = (connectedID, data) => {
     data[connectedID] = {};
     data[connectedID]["fields"] = fields;
@@ -268,6 +299,11 @@ const saveGameData = (connectedID, data) => {
     })
 }
 
+/**
+ * Loads Game of Players
+ * @param {string} connectedIDs string ID from player 1 and 2 joined with an '&'
+ * @param {object} getData Game Data stored in ./commands_dc/_Game/_data/3Won.json
+ */
 const loadGameData = (connectedIDs, getData) => {
     fields = getData[connectedIDs]["fields"];
     activePlayer = getData[connectedIDs]["activePlayer"];
@@ -275,6 +311,11 @@ const loadGameData = (connectedIDs, getData) => {
     Player2 = getData[connectedIDs]["Player2"];
 }
 
+/**
+ * Deletes Game of Players
+ * @param {string} connectedID string ID from player 1 and 2 joined with an '&'
+ * @param {object} getData Game Data stored in ./commands_dc/_Game/_data/3Won.json
+ */
 const deleteGameData = (connectedID, getData) => {
     delete getData[connectedID];
     fs.writeFileSync('./commands_dc/_Game/_data/3Won.json', JSON.stringify(getData), (err) => {
@@ -282,6 +323,11 @@ const deleteGameData = (connectedID, getData) => {
     });
 }
 
+
+/**
+ * Constructs and sends Playground to Channel where Button were Clicked or Message was sent.
+ * @param {discord.Message | discord.Interaction} msg get `IDs`, `Names`, `Channel`, `Guild` and ( if interaction ) `Playground`
+ */
 const getPlayfield = (msg) => {
     const playerEmbed = new discord.MessageEmbed();
 
