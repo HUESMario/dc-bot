@@ -7,10 +7,6 @@ const tools = require('./tools/tools.js');
 const fs = require('fs');
 const token = require('./Token.js');
 
-/*const queryString = require('querystring');
-const gifQueue = require('./commands_dc/globalChat/gifQueue.js');
-const gifList = new gifQueue.queueList();
-*/
 let prefix = 'rg!';
 let statusArr = [`TTT and 3 won`, 'updating to discord.js v13', 'get Commands with rg!help'];
 let currentStatus = 0;

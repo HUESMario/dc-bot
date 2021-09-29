@@ -58,12 +58,7 @@ const global = async (bot, msg, data) => {
             }
                 if(oldMsg.embeds.length > 0)
                 {
-                    //sendGif.sendGif(oldMsg, gifList, bot)
-                    globalEmbed.addFields({
-                        name: `Wait a Sec`, 
-                        value: '> currently I dont Support Gifs `reason:` \nIve got a Problem with get-Image-URLS and heroku and node v16 ( as Combination )',
-                        
-                    })
+                    sendGif.sendGif(oldMsg, bot, data, i)
                 }
                 else if(oldMsg.attachments.toJSON().length > 0)
                 {

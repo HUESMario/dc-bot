@@ -6,11 +6,12 @@
   "engines": {
     "node": "16.6",
     "npm": "7.x"
- },
-  "engineStrict" : true,
+  },
+  "engineStrict": true,
   "dependencies": {
     "discord.js": "^13.1.0",
     "mongodb": "^3.6.10",
+    "node-html-parser": "^4.1.5",
     "node-tweet-stream": "^2.1.0",
     "omdb": "^0.8.0",
     "ps-list": "^7.2.0",
