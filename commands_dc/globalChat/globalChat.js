@@ -3,12 +3,22 @@ const delGlobal = require('./delGlobal.js');
 const sendGif = require('./sendGif.js');
 const imBored = require('./imBored.js');
 const discord = require('discord.js');
+const URL = require("url").URL;
 
-/**
-     * @param {discord.Client} bot argument to get every Channel
-     * @param {discord.Message} msg argument to get User, Content, Pictures, Guild
-     * @param {object} data argument to get every registered Channel
-     */
+
+ const stringIsAValidUrl = (s) => {
+   try {
+     new URL(s);
+     return true;
+   } catch (err) {
+     return false;
+   }
+ };
+ /**
+ * @param {discord.Client} bot argument to get every Channel
+ * @param {discord.Message} msg argument to get User, Content, Pictures, Guild
+ * @param {object} data argument to get every registered Channel
+ */
 const global = async (bot, msg, data) => {
     
     if(msg.author.bot && (msg.author.id !== '842053072666099733' || msg.author.id !== '799388234877632558'))
@@ -22,7 +32,7 @@ const global = async (bot, msg, data) => {
         const oldMsg = msg;
         if(msg.deletable)
         {
-            await msg.delete();
+            msg.delete();
         }
         const registeredGuilds = Object.keys(data);
         for (let i = 0; i < registeredGuilds.length; ++i) {
@@ -34,7 +44,8 @@ const global = async (bot, msg, data) => {
 
             if(oldMsg.reference)
             {
-            const referenceMSG = await oldMsg.channel.messages.fetch(oldMsg.reference.messageID);
+            const referenceMSG = await (await oldMsg.channel.messages.fetch({limit: 1,before:oldMsg.reference.messageID, after: oldMsg.reference.messageID})).first()
+            console.log(referenceMSG);
                 if(referenceMSG.embeds.length === 0)
                 {
                     globalEmbed.addFields({
@@ -59,6 +70,7 @@ const global = async (bot, msg, data) => {
                 if(oldMsg.embeds.length > 0)
                 {
                     sendGif.sendGif(oldMsg, bot, data, i)
+                    return;
                 }
                 else if(oldMsg.attachments.toJSON().length > 0)
                 {
